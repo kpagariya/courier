@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Helpii{% endblock %}
+
+{% block content %}
+<!-- Admin Navigation Bar -->
+<div class="bg-dark text-white py-2 border-bottom border-secondary">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 bg-transparent">
+                    <li class="breadcrumb-item active text-white" aria-current="page"><i class="bi bi-house-door me-1"></i>Admin Home</li>
+                </ol>
+            </nav>
+            <div class="btn-group btn-group-sm" role="group">
+                <a href="{% url 'orders:admin_dashboard' %}" class="btn btn-light" title="Dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                </a>
+                <a href="{% url 'orders:admin_order_list' %}" class="btn btn-outline-light" title="Orders">
+                    <i class="bi bi-list-check"></i>
+                </a>
+                <a href="{% url 'orders:admin_concern_list' %}" class="btn btn-outline-light" title="Concerns">
+                    <i class="bi bi-chat-dots"></i>
+                </a>
+                <a href="{% url 'admin:index' %}" class="btn btn-outline-light" title="Django Admin">
+                    <i class="bi bi-gear"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-dark text-white py-3">
+    <div class="container">
+        <h2 class="fw-bold mb-1"><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</h2>
+        <p class="mb-0 text-light">Monitor and manage all courier operations from one place</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <!-- Statistics Cards - Clickable -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <a href="{% url 'orders:admin_order_list' %}" class="text-decoration-none">
+                    <div class="card h-100 text-white stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-1">Total Orders</p>
+                                    <h2 class="fw-bold mb-0">{{ total_orders }}</h2>
+                                </div>
+                                <i class="bi bi-box-seam" style="font-size: 3rem; opacity: 0.8;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-3">
+                <a href="{% url 'orders:admin_order_list' %}?status=UNDER_REVIEW" class="text-decoration-none">
+                    <div class="card h-100 text-white stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-1">Pending Review</p>
+                                    <h2 class="fw-bold mb-0">{{ pending_orders }}</h2>
+                                </div>
+                                <i class="bi bi-clock-history" style="font-size: 3rem; opacity: 0.8;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-3">
+                <a href="{% url 'orders:admin_order_list' %}?status=ACTIVE" class="text-decoration-none">
+                    <div class="card h-100 text-white stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-1">Active Orders</p>
+                                    <h2 class="fw-bold mb-0">{{ active_orders }}</h2>
+                                </div>
+                                <i class="bi bi-truck" style="font-size: 3rem; opacity: 0.8;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-3">
+                <a href="{% url 'orders:admin_order_list' %}?status=DELIVERED" class="text-decoration-none">
+                    <div class="card h-100 text-white stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-1">Delivered</p>
+                                    <h2 class="fw-bold mb-0">{{ delivered_orders }}</h2>
+                                </div>
+                                <i class="bi bi-check-circle" style="font-size: 3rem; opacity: 0.8;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <style>
+            .stat-card {
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+        </style>
+        
+        <!-- Quick Actions -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <a href="{% url 'orders:admin_order_list' %}" class="text-decoration-none">
+                    <div class="card text-center p-4 h-100">
+                        <i class="bi bi-list-ul text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 mb-0">All Orders</h5>
+                        <p class="text-muted mb-0">View and manage all orders</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-4">
+                <a href="{% url 'orders:admin_order_list' %}?status=UNDER_REVIEW" class="text-decoration-none">
+                    <div class="card text-center p-4 h-100">
+                        <i class="bi bi-exclamation-circle text-warning" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 mb-0">Pending Reviews</h5>
+                        <p class="text-muted mb-0">Orders awaiting approval</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-4">
+                <a href="{% url 'admin:index' %}" class="text-decoration-none">
+                    <div class="card text-center p-4 h-100">
+                        <i class="bi bi-gear text-success" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 mb-0">Admin Panel</h5>
+                        <p class="text-muted mb-0">Full system administration</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        
+        <!-- Recent Orders -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Orders</h5>
+                    <a href="{% url 'orders:admin_order_list' %}" class="btn btn-primary btn-sm">View All</a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Pickup</th>
+                                    <th>Delivery</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td><strong>{{ order.order_id }}</strong></td>
+                                    <td>{{ order.customer.get_full_name }}</td>
+                                    <td>{{ order.pickup_address|truncatewords:3 }}</td>
+                                    <td>{{ order.delivery_address|truncatewords:3 }}</td>
+                                    <td>
+                                        <span class="status-badge bg-{{ order.get_status_display_class }}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if order.courier_amount %}
+                                            <strong>${{ order.courier_amount }}</strong>
+                                        {% elif order.auto_calculated_amount %}
+                                            <span class="text-info">~${{ order.auto_calculated_amount }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'orders:admin_order_detail' order.order_id %}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> Manage
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3 mb-0">No recent orders</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; padding: 20px; text-align: center; }
+        .content { background: #f8f9fa; padding: 20px; }
+        .info-block { background: white; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2563eb; }
+        .label { font-weight: bold; color: #666; }
+        .value { color: #333; margin-bottom: 8px; }
+        .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 New Courier Order</h1>
+            <p>Order ID: {{ order.order_id }}</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-block">
+                <h3>Customer Information</h3>
+                <div class="value"><span class="label">Name:</span> {{ order.customer.get_full_name }}</div>
+                <div class="value"><span class="label">Email:</span> {{ order.customer.email }}</div>
+                <div class="value"><span class="label">Contact:</span> {{ order.customer.contact }}</div>
+            </div>
+            
+            <div class="info-block">
+                <h3>Parcel Details</h3>
+                <div class="value"><span class="label">Type:</span> {{ order.get_parcel_type_display }}</div>
+                <div class="value"><span class="label">Weight:</span> {{ order.parcel_weight }} kg</div>
+                <div class="value"><span class="label">Quantity:</span> {{ order.quantity }} parcel(s)</div>
+                <div class="value"><span class="label">Dimensions:</span> {{ order.get_dimensions_display }}</div>
+            </div>
+            
+            <div class="info-block">
+                <h3>Addresses</h3>
+                <div class="value"><span class="label">Pickup:</span> {{ order.pickup_address }}</div>
+                <div class="value"><span class="label">Delivery:</span> {{ order.delivery_address }}</div>
+                {% if order.distance_km %}
+                <div class="value"><span class="label">Distance:</span> {{ order.distance_km }} km</div>
+                {% endif %}
+            </div>
+            
+            {% if order.auto_calculated_amount or order.customer_proposed_price %}
+            <div class="info-block" style="border-left-color: #10b981;">
+                <h3>💰 Pricing Information</h3>
+                
+                {% if order.auto_calculated_amount %}
+                <div class="value">
+                    <span class="label">System Estimated Price:</span>
+                    <span style="font-size: 20px; color: #10b981; font-weight: bold;">
+                        NZD ${{ order.auto_calculated_amount }}
+                    </span>
+                </div>
+                <p style="color: #666; font-size: 11px; margin: 5px 0 15px 0;">
+                    Auto-calculated based on distance ({{ order.distance_km|floatformat:2 }} km), weight ({{ order.parcel_weight }} kg), and parcel type ({{ order.get_parcel_type_display }})
+                </p>
+                {% endif %}
+                
+                {% if order.customer_proposed_price %}
+                <div class="value" style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <span class="label">🤝 Customer's Counter-Offer:</span>
+                    <span style="font-size: 20px; color: #f59e0b; font-weight: bold;">
+                        NZD ${{ order.customer_proposed_price }}
+                    </span>
+                </div>
+                <p style="color: #856404; font-size: 11px; margin: 5px 0 0 0;">
+                    ⚠️ Customer has proposed a different price. Please review and decide on final courier_amount.
+                </p>
+                {% endif %}
+                
+                {% if order.auto_calculated_amount and order.customer_proposed_price %}
+                <div style="margin-top: 15px; padding: 10px; background: #e7f3ff; border-radius: 5px;">
+                    <p style="margin: 0; font-size: 12px; color: #0056b3;">
+                        <strong>💡 Action Required:</strong> Customer wants ${{ order.customer_proposed_price|floatformat:2 }}, system suggests ${{ order.auto_calculated_amount|floatformat:2 }}. 
+                        Please review and set the final courier_amount in the admin panel.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% if order.description %}
+            <div class="info-block">
+                <h3>Additional Notes</h3>
+                <p>{{ order.description }}</p>
+            </div>
+            {% endif %}
+            
+            <div style="text-align: center;">
+                <p><strong>⚠️ Please review and accept/reject this order in the admin panel.</strong></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated notification from Helpii System</p>
+            <p>© 2024 Helpii. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Stripe Payment - Helpii{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4">
+    <div class="container">
+        <h2 class="fw-bold">Complete Payment</h2>
+        <p class="text-muted mb-0">Enter your card details to complete the payment</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <!-- Order Summary -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-3">Order Details</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Order ID:</span>
+                            <strong>{{ order.order_id }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Transaction ID:</span>
+                            <strong>{{ payment.transaction_id }}</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Total Amount:</h5>
+                            <h4 class="mb-0 text-primary">NZD ${{ order.courier_amount }}</h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Form -->
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h5 class="mb-4"><i class="bi bi-credit-card me-2"></i>Card Details</h5>
+                        
+                        <form id="payment-form">
+                            <div id="card-element" class="form-control mb-3" style="height: 40px; padding: 10px;">
+                                <!-- Stripe Card Element will be inserted here -->
+                            </div>
+                            
+                            <div id="card-errors" role="alert" class="text-danger mb-3"></div>
+                            
+                            <button id="submit-button" class="btn btn-primary w-100 py-2">
+                                <span id="button-text">
+                                    <i class="bi bi-lock me-2"></i>Pay NZD ${{ order.courier_amount }}
+                                </span>
+                                <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status">
+                                    <span class="visually-hidden">Processing...</span>
+                                </span>
+                            </button>
+                            
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    <i class="bi bi-shield-check me-1"></i>
+                                    Secured by Stripe
+                                </small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+    
+    // Create card element
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            }
+        }
+    });
+    cardElement.mount('#card-element');
+    
+    // Handle errors
+    cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+    
+    // Handle form submission
+    const form = document.getElementById('payment-form');
+    const submitButton = document.getElementById('submit-button');
+    const spinner = document.getElementById('spinner');
+    const buttonText = document.getElementById('button-text');
+    
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        // Disable submit button
+        submitButton.disabled = true;
+        spinner.classList.remove('d-none');
+        buttonText.classList.add('d-none');
+        
+        // Confirm payment
+        const {error, paymentIntent} = await stripe.confirmCardPayment(
+            '{{ client_secret }}',
+            {
+                payment_method: {
+                    card: cardElement
+                }
+            }
+        );
+        
+        if (error) {
+            // Show error
+            document.getElementById('card-errors').textContent = error.message;
+            submitButton.disabled = false;
+            spinner.classList.add('d-none');
+            buttonText.classList.remove('d-none');
+        } else {
+            // Payment successful
+            if (paymentIntent.status === 'succeeded') {
+                window.location.href = "{% url 'payments:stripe_success' order.order_id %}";
+            }
+        }
+    });
+</script>
+{% endblock %}
+

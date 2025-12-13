@@ -1,0 +1,605 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Helpii - Fast & Reliable Courier Services in New Zealand{% endblock %}
+
+{% block content %}
+<!-- Hero Section - Modern Design -->
+<section class="hero-section py-5">
+    <div class="container" style="max-width: 1200px;">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <!-- Badge -->
+                <div class="mb-3">
+                    <span class="badge px-4 py-2 rounded-pill" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%); color: white; font-size: 0.95rem;">
+                        <i class="bi bi-lightning-charge-fill me-2"></i> Auckland's Fastest Courier
+                    </span>
+                </div>
+                
+                <!-- Heading with gradient -->
+                <h1 class="display-5 fw-bold mb-4" style="line-height: 1.2;">
+                    <span class="gradient-text">Fast & Reliable</span><br>
+                    Courier Services
+                </h1>
+                
+                <p class="lead text-muted mb-4" style="font-size: 1.1rem;">
+                    Delivering your parcels safely across New Zealand. 
+                    <strong class="text-dark">Track in real-time</strong>, pay securely, and enjoy peace of mind.
+                </p>
+                
+                <!-- Stats Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="fw-bold text-primary mb-0">2HR</h3>
+                            <small class="text-muted">Express</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center border-start border-end">
+                            <h3 class="fw-bold text-primary mb-0">1000+</h3>
+                            <small class="text-muted">Deliveries</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="fw-bold text-primary mb-0">24/7</h3>
+                            <small class="text-muted">Support</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CTA Buttons -->
+                <div class="d-flex gap-3 flex-wrap">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'orders:create_order' %}" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-box-seam me-2"></i>Book a Courier
+                        </a>
+                        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary btn-lg px-4">
+                            <i class="bi bi-list-check me-2"></i>My Orders
+                        </a>
+                    {% else %}
+                        <a href="#login-section" class="btn btn-primary btn-lg px-4" onclick="document.getElementById('login-section').scrollIntoView({behavior: 'smooth'}); return false;">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login to Book
+                        </a>
+                        <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg px-4">
+                            <i class="bi bi-person-plus me-2"></i>Register Free
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-7 ps-lg-4">
+                <!-- Auto-sliding Image Carousel - Larger Size -->
+                <div id="heroCarousel" class="carousel slide ms-lg-3" data-bs-ride="carousel" data-bs-interval="4000">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                    </div>
+                    <div class="carousel-inner rounded shadow-lg" style="border-radius: 20px !important;">
+                        <!-- Slide 1 -->
+                        <div class="carousel-item active">
+                            <img src="{% static 'images/slide1.jpg' %}" 
+                                 class="d-block w-100" 
+                                 alt="Fast Courier Delivery"
+                                 style="height: 410px; width: 100%; object-fit: cover; object-position: center top;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 class="fw-bold text-shadow">Fast Delivery</h5>
+                                <p class="text-shadow">Same day & express options</p>
+                            </div>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="carousel-item">
+                            <img src="{% static 'images/slide2.jpg' %}" 
+                                 class="d-block w-100" 
+                                 alt="Package Handling"
+                                 style="height: 410px; width: 100%; object-fit: cover; object-position: center top;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 class="fw-bold text-shadow">Safe Handling</h5>
+                                <p class="text-shadow">Your parcels in trusted hands</p>
+                            </div>
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="carousel-item">
+                            <img src="{% static 'images/slide3.jpg' %}" 
+                                 class="d-block w-100" 
+                                 alt="Auckland Wide Delivery"
+                                 style="height: 410px; width: 100%; object-fit: cover; object-position: center top;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 class="fw-bold text-shadow">Auckland Wide</h5>
+                                <p class="text-shadow">Covering all of Auckland metro</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Navigation arrows -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+                <style>
+                    .text-shadow {
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+                    }
+                    #heroCarousel .carousel-caption {
+                        background: linear-gradient(transparent, rgba(0,0,0,0.6));
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        padding: 20px;
+                        border-radius: 0 0 20px 20px;
+                    }
+                    #heroCarousel .carousel-indicators {
+                        margin-bottom: 10px;
+                    }
+                    #heroCarousel .carousel-indicators button {
+                        width: 12px;
+                        height: 12px;
+                        border-radius: 50%;
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Login/Register Section (for non-authenticated users) -->
+{% if not user.is_authenticated %}
+<section id="login-section" class="py-5">
+    <div class="container" style="max-width: 1200px;">
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <span class="badge px-4 py-2 rounded-pill mb-3" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%); color: white; font-size: 0.95rem;">
+                <i class="bi bi-rocket-takeoff me-2"></i> Get Started
+            </span>
+            <h2 class="display-6 fw-bold">Ready to Ship?</h2>
+            <p class="text-muted">Login or track your parcel - it's quick and easy</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Login Form -->
+            <div class="col-lg-6">
+                <div class="card h-100 gradient-border">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="icon-circle p-3 rounded-circle me-3" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%);">
+                                <i class="bi bi-box-arrow-in-right fs-4 text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 fw-bold">Login to Book</h4>
+                                <small class="text-muted">Access your dashboard</small>
+                            </div>
+                        </div>
+                        
+                        <form method="post" action="{% url 'accounts:login' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'orders:create_order' %}">
+                            
+                            <div class="mb-3">
+                                <label for="login-email" class="form-label fw-medium">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-envelope text-muted"></i>
+                                    </span>
+                                    <input type="email" class="form-control border-start-0" id="login-email" name="username" 
+                                           placeholder="your.email@example.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="login-password" class="form-label fw-medium">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" class="form-control border-start-0" id="login-password" name="password" 
+                                           placeholder="Enter your password" required>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="remember-me" name="remember">
+                                    <label class="form-check-label small" for="remember-me">Remember me</label>
+                                </div>
+                                <a href="{% url 'accounts:password_reset' %}" class="text-primary small">Forgot password?</a>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 py-2">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Login & Book Courier
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Track Order -->
+            <div class="col-lg-6">
+                <div class="card h-100" style="border: 2px solid #0ea5e9;">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="icon-circle p-3 rounded-circle me-3" style="background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);">
+                                <i class="bi bi-search fs-4 text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 fw-bold">Track Your Order</h4>
+                                <small class="text-muted">No login required</small>
+                            </div>
+                        </div>
+                        
+                        <form method="get" action="{% url 'orders:track_order' %}">
+                            <div class="mb-4">
+                                <label for="track-order-id" class="form-label fw-medium">Order ID</label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-info bg-opacity-10 border-end-0 text-info">
+                                        <i class="bi bi-hash"></i>
+                                    </span>
+                                    <input type="text" class="form-control border-start-0" id="track-order-id" name="order_id" 
+                                           placeholder="ORD-20251201-1" required
+                                           pattern="ORD-\d{8}-\d+"
+                                           title="Format: ORD-YYYYMMDD-N">
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="bi bi-info-circle me-1"></i>Format: ORD-YYYYMMDD-N
+                                </small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-info w-100 py-2 mb-4">
+                                <i class="bi bi-search me-2"></i>Track Order Now
+                            </button>
+                        </form>
+                        
+                        <div class="bg-light rounded-3 p-3 text-center">
+                            <p class="mb-2 small text-muted">New Customer?</p>
+                            <a href="{% url 'accounts:register' %}" class="btn btn-success px-4">
+                                <i class="bi bi-person-plus me-1"></i>Register Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Quick Info Bar -->
+<section class="py-3" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+    <div class="container" style="max-width: 1200px;">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+            <a href="{% url 'core:terms' %}" class="text-white text-decoration-none small hover-lift">
+                <i class="bi bi-shield-check me-1"></i>Shipping Policy
+            </a>
+            <span class="text-white-50">|</span>
+            <a href="{% url 'core:contact' %}" class="text-white text-decoration-none small hover-lift">
+                <i class="bi bi-telephone-fill me-1"></i>+64 9 XXX XXXX
+            </a>
+            <span class="text-white-50">|</span>
+            <a href="{% url 'core:contact' %}" class="text-white text-decoration-none small hover-lift">
+                <i class="bi bi-envelope-fill me-1"></i>hello@helpii.co.nz
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+.hover-lift {
+    transition: all 0.3s ease;
+}
+.hover-lift:hover {
+    color: #06b6d4 !important;
+}
+.icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+
+<!-- Quick Links Section - Modern Pills -->
+<section class="py-4 bg-white">
+    <div class="container" style="max-width: 1200px;">
+        <div class="d-flex flex-wrap gap-3 justify-content-center align-items-center">
+            <span class="badge px-4 py-2 rounded-pill" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%); color: white; font-size: 0.95rem;">
+                <i class="bi bi-lightning-fill me-2"></i>Quick Access
+            </span>
+            <a href="{% url 'orders:track_order' %}" class="btn btn-outline-primary rounded-pill px-4">
+                <i class="bi bi-search me-2"></i>Track Order
+            </a>
+            <a href="{% url 'core:services' %}" class="btn btn-outline-primary rounded-pill px-4">
+                <i class="bi bi-truck me-2"></i>Our Services
+            </a>
+            <a href="{% url 'core:contact' %}" class="btn btn-outline-primary rounded-pill px-4">
+                <i class="bi bi-headset me-2"></i>Contact Support
+            </a>
+            <a href="{% url 'core:career' %}" class="btn btn-outline-primary rounded-pill px-4">
+                <i class="bi bi-briefcase me-2"></i>Careers
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'orders:dashboard' %}" class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-speedometer2 me-2"></i>My Dashboard
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-success rounded-pill px-4">
+                <i class="bi bi-person-plus me-2"></i>Register Free
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section - Modern Cards -->
+<section class="py-5">
+    <div class="container" style="max-width: 1200px;">
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <span class="badge px-4 py-2 rounded-pill mb-3" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%); color: white; font-size: 0.95rem;">
+                <i class="bi bi-star-fill me-2"></i> Our Advantages
+            </span>
+            <h2 class="display-6 fw-bold mb-3">Why Choose <span class="gradient-text">Helpii</span>?</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Best courier services with modern technology and professional care</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="feature-icon mx-auto mb-3">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Fast Delivery</h5>
+                    <p class="text-muted mb-0 small">Same-day and next-day delivery options available across Auckland</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Safe & Secure</h5>
+                    <p class="text-muted mb-0 small">Your parcels are handled with care and fully insured during transit</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Real-Time Tracking</h5>
+                    <p class="text-muted mb-0 small">Track your parcel's journey from pickup to delivery in real-time</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Secure Payments</h5>
+                    <p class="text-muted mb-0 small">Multiple payment options including PayPal and credit/debit cards</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">24/7 Support</h5>
+                    <p class="text-muted mb-0 small">Our customer support team is always ready to assist you</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                        <i class="bi bi-star"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Quality Service</h5>
+                    <p class="text-muted mb-0 small">Trusted by thousands of customers across Auckland</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works - Modern Timeline -->
+<section class="py-5" style="background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);">
+    <div class="container" style="max-width: 1200px;">
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <span class="badge px-4 py-2 rounded-pill mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.95rem;">
+                <i class="bi bi-info-circle me-2"></i> Easy Process
+            </span>
+            <h2 class="display-6 fw-bold mb-3">How It Works</h2>
+            <p class="text-muted">Simple steps to send your parcel</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-6 col-md-3">
+                <div class="text-center position-relative">
+                    <div class="step-number mx-auto mb-3">1</div>
+                    <h6 class="fw-bold mb-2">Register</h6>
+                    <p class="text-muted small mb-0">Create your free account</p>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-3">
+                <div class="text-center position-relative">
+                    <div class="step-number mx-auto mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">2</div>
+                    <h6 class="fw-bold mb-2">Book Courier</h6>
+                    <p class="text-muted small mb-0">Enter parcel details</p>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-3">
+                <div class="text-center position-relative">
+                    <div class="step-number mx-auto mb-3" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">3</div>
+                    <h6 class="fw-bold mb-2">Pay Securely</h6>
+                    <p class="text-muted small mb-0">Once quote approved</p>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-3">
+                <div class="text-center position-relative">
+                    <div class="step-number mx-auto mb-3" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">4</div>
+                    <h6 class="fw-bold mb-2">Track & Receive</h6>
+                    <p class="text-muted small mb-0">Real-time tracking</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+}
+.step-number:hover {
+    transform: scale(1.1);
+}
+</style>
+
+<!-- CTA Section - Modern Gradient -->
+<section class="py-5">
+    <div class="container" style="max-width: 1200px;">
+        <div class="card border-0 p-5" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%); border-radius: 30px;">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0 text-white">
+                    <h2 class="fw-bold mb-3">Ready to Send Your Parcel?</h2>
+                    <p class="mb-0">Join thousands of satisfied customers and experience hassle-free courier services</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'orders:create_order' %}" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold">
+                            Book Now <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    {% else %}
+                        <a href="#login-section" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold" onclick="document.getElementById('login-section').scrollIntoView({behavior: 'smooth'}); return false;">
+                            Get Started <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section - Modern Glassmorphism -->
+<section class="py-5" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%);">
+    <div class="container" style="max-width: 1200px;">
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-box-seam fs-2 mb-2"></i>
+                    <h2 class="display-6 fw-bold mb-1">10K+</h2>
+                    <p class="mb-0 opacity-75">Parcels Delivered</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-people fs-2 mb-2"></i>
+                    <h2 class="display-6 fw-bold mb-1">5K+</h2>
+                    <p class="mb-0 opacity-75">Happy Customers</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-geo-alt fs-2 mb-2"></i>
+                    <h2 class="display-6 fw-bold mb-1">50+</h2>
+                    <p class="mb-0 opacity-75">Areas Covered</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-clock-history fs-2 mb-2"></i>
+                    <h2 class="display-6 fw-bold mb-1">98%</h2>
+                    <p class="mb-0 opacity-75">On-Time Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Home Page Custom Styles */
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    color: white;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Floating animation for carousel */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+#heroCarousel {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Gradient text utility */
+.gradient-text {
+    background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Feature cards hover effect */
+.feature-card {
+    transition: all 0.4s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+.feature-card:hover .feature-icon {
+    transform: rotateY(180deg);
+}
+
+.feature-icon {
+    transition: transform 0.6s ease;
+}
+
+/* Pulse animation for CTA */
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+    50% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
+}
+
+.btn-primary.btn-lg {
+    animation: pulse 2s infinite;
+}
+
+.btn-primary.btn-lg:hover {
+    animation: none;
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; }
+        .header { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; padding: 30px 20px; text-align: center; }
+        .content { padding: 30px 20px; }
+        .info-block { background: #f8f9fa; padding: 15px; margin-bottom: 15px; border-radius: 5px; border-left: 4px solid #2563eb; }
+        .label { font-weight: bold; color: #666; display: inline-block; width: 140px; }
+        .value { color: #333; }
+        .price-box { background: #e7f3ff; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0; }
+        .button { display: inline-block; padding: 12px 30px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        .footer { background: #f8f9fa; text-align: center; padding: 20px; color: #666; font-size: 12px; border-top: 1px solid #dee2e6; }
+        .status-badge { background: #ffc107; color: #000; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Order Confirmed!</h1>
+            <p style="font-size: 18px; margin: 10px 0 0 0;">{{ order.order_id }}</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear <strong>{{ order.customer.get_full_name }}</strong>,</p>
+            
+            <p>Thank you for choosing Helpii! Your order has been successfully created and is now under review by our team.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <span class="status-badge">⏳ UNDER REVIEW</span>
+            </div>
+            
+            {% if order.auto_calculated_amount %}
+            <div class="price-box">
+                <h3 style="margin: 0 0 10px 0; color: #2563eb;">Estimated Quote</h3>
+                <div style="font-size: 32px; font-weight: bold; color: #10b981; margin: 10px 0;">
+                    NZD ${{ order.auto_calculated_amount }}
+                </div>
+                <p style="font-size: 12px; color: #666; margin: 10px 0 0 0;">
+                    Based on {{ order.distance_km }} km distance, {{ order.parcel_weight }} kg weight
+                </p>
+            </div>
+            {% endif %}
+            
+            {% if order.customer_proposed_price %}
+            <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <p style="margin: 0; color: #856404;">
+                    <strong>Your Proposed Price:</strong> NZD ${{ order.customer_proposed_price }}<br>
+                    <small>Our team will review your counter-offer and respond shortly.</small>
+                </p>
+            </div>
+            {% endif %}
+            
+            <div class="info-block">
+                <h3 style="margin-top: 0;">📦 Parcel Details</h3>
+                <p><span class="label">Type:</span> <span class="value">{{ order.get_parcel_type_display }}</span></p>
+                <p><span class="label">Weight:</span> <span class="value">{{ order.parcel_weight }} kg</span></p>
+                <p><span class="label">Quantity:</span> <span class="value">{{ order.quantity }} parcel(s)</span></p>
+                <p><span class="label">Dimensions:</span> <span class="value">{{ order.get_dimensions_display }}</span></p>
+            </div>
+            
+            <div class="info-block">
+                <h3 style="margin-top: 0;">📍 Addresses</h3>
+                <p><span class="label">Pickup:</span> <span class="value">{{ order.pickup_address }}</span></p>
+                <p><span class="label">Delivery:</span> <span class="value">{{ order.delivery_address }}</span></p>
+                {% if order.distance_km %}
+                <p><span class="label">Distance:</span> <span class="value">{{ order.distance_km }} km</span></p>
+                {% endif %}
+            </div>
+            
+            <div style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <h4 style="margin-top: 0; color: #0056b3;">What happens next?</h4>
+                <ol style="margin: 10px 0; padding-left: 20px;">
+                    <li>Our team reviews your order (2-4 hours)</li>
+                    <li>You'll receive final quote confirmation</li>
+                    <li>Make secure payment online</li>
+                    <li>Track your parcel in real-time</li>
+                    <li>Parcel delivered with proof photo</li>
+                </ol>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{ order.get_absolute_url }}" class="button">View Order Details</a>
+            </div>
+            
+            <p style="color: #666; font-size: 13px; margin-top: 30px;">
+                <strong>Questions?</strong> Reply to this email or contact us at {{ ADMIN_EMAIL }}
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Helpii</strong> - Fast & Reliable Courier Services</p>
+            <p>Delivering safely across New Zealand</p>
+            <p style="margin-top: 15px;">© 2024 Helpii. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+

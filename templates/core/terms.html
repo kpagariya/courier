@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Terms & Conditions - Helpii{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-center">Terms & Conditions</h1>
+        <p class="lead text-center">Last updated: November 2024</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card p-4">
+                    <h3 class="mb-4">1. Acceptance of Terms</h3>
+                    <p>By accessing and using Helpii's services, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                    
+                    <h3 class="mb-4 mt-5">2. Service Description</h3>
+                    <p>Helpii provides courier and delivery services throughout New Zealand. We reserve the right to modify, suspend, or discontinue the service with or without notice.</p>
+                    
+                    <h3 class="mb-4 mt-5">3. User Responsibilities</h3>
+                    <ul>
+                        <li>Provide accurate information for pickup and delivery addresses</li>
+                        <li>Ensure parcels are properly packed and labeled</li>
+                        <li>Declare prohibited or restricted items</li>
+                        <li>Make timely payments for services rendered</li>
+                        <li>Maintain account security and confidentiality</li>
+                    </ul>
+                    
+                    <h3 class="mb-4 mt-5">4. Prohibited Items</h3>
+                    <p>The following items are prohibited from being shipped through our service:</p>
+                    <ul>
+                        <li>Illegal substances and contraband</li>
+                        <li>Explosives, firearms, and weapons</li>
+                        <li>Hazardous materials</li>
+                        <li>Perishable goods without prior arrangement</li>
+                        <li>Live animals</li>
+                    </ul>
+                    
+                    <h3 class="mb-4 mt-5">5. Pricing and Payment</h3>
+                    <p>All prices are quoted in NZD. Payment must be made before delivery is initiated. We accept various payment methods including credit cards, debit cards, and PayPal.</p>
+                    
+                    <h3 class="mb-4 mt-5">6. Delivery Times</h3>
+                    <p>While we strive to meet estimated delivery times, these are not guaranteed. Delays may occur due to circumstances beyond our control including weather, traffic, or unforeseen events.</p>
+                    
+                    <h3 class="mb-4 mt-5">7. Liability and Insurance</h3>
+                    <p>Our liability is limited to the declared value of the parcel or $1000 NZD, whichever is lower. Additional insurance is available for high-value items.</p>
+                    
+                    <h3 class="mb-4 mt-5">8. Claims and Disputes</h3>
+                    <p>Claims for lost or damaged parcels must be reported within 7 days of the delivery date. All disputes will be resolved in accordance with New Zealand law.</p>
+                    
+                    <h3 class="mb-4 mt-5">9. Privacy and Data Protection</h3>
+                    <p>We are committed to protecting your privacy. Please refer to our <a href="{% url 'core:privacy' %}">Privacy Policy</a> for details on how we collect, use, and protect your personal information.</p>
+                    
+                    <h3 class="mb-4 mt-5">10. Amendments</h3>
+                    <p>We reserve the right to amend these terms and conditions at any time. Continued use of our services after changes constitutes acceptance of the modified terms.</p>
+                    
+                    <h3 class="mb-4 mt-5">11. Contact Information</h3>
+                    <p>For questions about these terms and conditions, please contact us at:</p>
+                    <p>
+                        Email: legal@courierpro.co.nz<br>
+                        Phone: +64 9 XXX XXXX<br>
+                        Address: 123 Queen Street, Auckland, New Zealand
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,13 @@
+/* Custom CSS for CourierPro */
+
+/* Additional custom styles can be added here */
+
+.hover-shadow {
+    transition: all 0.3s;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    transform: translateY(-3px);
+}
+

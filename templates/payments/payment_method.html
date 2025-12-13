@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment - Helpii{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4">
+    <div class="container">
+        <h2 class="fw-bold"><i class="bi bi-credit-card me-2"></i>Complete Payment</h2>
+        <p class="text-muted mb-0">Order #{{ order.order_id }}</p>
+    </div>
+</div>
+
+<section class="py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Order Summary -->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 text-center border-end">
+                                <small class="text-muted d-block">Order ID</small>
+                                <span class="fw-bold fs-5">{{ order.order_id }}</span>
+                            </div>
+                            <div class="col-md-4 text-center border-end">
+                                <small class="text-muted d-block">Delivery</small>
+                                <span class="fw-bold">{{ order.get_delivery_speed_display|default:order.delivery_speed }}</span>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <small class="text-muted d-block">Amount to Pay</small>
+                                <span class="fw-bold fs-4 text-success">NZD ${{ order.courier_amount }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Methods -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 pt-4">
+                        <h5 class="mb-0"><i class="bi bi-wallet2 me-2"></i>Select Payment Method</h5>
+                        <small class="text-muted">Choose how you'd like to pay</small>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <!-- Credit/Debit Card (Stripe) - Primary Option for NZ -->
+                            <div class="col-12">
+                                <form action="{% url 'payments:stripe_payment' order.order_id %}" method="post" id="stripe-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="payment-option w-100">
+                                        <div class="d-flex align-items-center p-3">
+                                            <div class="payment-icon bg-primary text-white">
+                                                <i class="bi bi-credit-card-fill"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3 text-start">
+                                                <h6 class="mb-1">Credit or Debit Card</h6>
+                                                <small class="text-muted">Visa, Mastercard, American Express</small>
+                                            </div>
+                                            <div class="card-logos">
+                                                <img src="https://cdn-icons-png.flaticon.com/32/196/196578.png" alt="Visa" height="24">
+                                                <img src="https://cdn-icons-png.flaticon.com/32/196/196561.png" alt="Mastercard" height="24">
+                                                <img src="https://cdn-icons-png.flaticon.com/32/196/196539.png" alt="Amex" height="24">
+                                            </div>
+                                            <i class="bi bi-chevron-right ms-3 text-muted"></i>
+                                        </div>
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <!-- PayPal -->
+                            <div class="col-12">
+                                <form action="{% url 'payments:paypal_payment' order.order_id %}" method="post" id="paypal-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="payment-option w-100">
+                                        <div class="d-flex align-items-center p-3">
+                                            <div class="payment-icon" style="background: #003087;">
+                                                <i class="bi bi-paypal text-white"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3 text-start">
+                                                <h6 class="mb-1">PayPal</h6>
+                                                <small class="text-muted">Pay with your PayPal account</small>
+                                            </div>
+                                            <img src="https://cdn-icons-png.flaticon.com/32/174/174861.png" alt="PayPal" height="28">
+                                            <i class="bi bi-chevron-right ms-3 text-muted"></i>
+                                        </div>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Security Badge -->
+                        <div class="text-center mt-4 pt-3 border-top">
+                            <div class="d-flex justify-content-center align-items-center gap-3 text-muted">
+                                <span><i class="bi bi-shield-lock-fill text-success me-1"></i>256-bit SSL Encrypted</span>
+                                <span><i class="bi bi-lock-fill text-success me-1"></i>Secure Payment</span>
+                            </div>
+                            <small class="text-muted d-block mt-2">Powered by Stripe - Trusted by millions of businesses in New Zealand</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{% url 'orders:order_detail' order.order_id %}" class="btn btn-link text-muted">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Order Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.payment-option {
+    width: 100%;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    padding: 0;
+}
+
+.payment-option:hover {
+    border-color: #0d6efd;
+    background: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.payment-option:active {
+    transform: scale(0.98);
+}
+
+.payment-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.card-logos {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.card-logos img {
+    opacity: 0.8;
+}
+
+/* Make entire button look clickable */
+.payment-option * {
+    pointer-events: none;
+}
+</style>
+{% endblock %}
+

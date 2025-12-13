@@ -1,0 +1,918 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{% if is_reorder %}Reorder{% else %}Create New Order{% endif %} - Helpii{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media (min-width: 992px) {
+        .sticky-top {
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+    }
+    
+    .card-header h6 {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    
+    .small-sidebar {
+        font-size: 0.875rem;
+    }
+    
+    /* Timeline steps for sidebar */
+    .timeline-steps {
+        padding: 5px 0;
+    }
+    
+    .step-item {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: start;
+    }
+    
+    .step-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .step-icon {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+    }
+    
+    .step-content {
+        flex: 1;
+        padding-top: 2px;
+    }
+    
+    .step-content strong {
+        display: block;
+        margin-bottom: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gradient py-3" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);">
+    <div class="container text-white">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="fw-bold mb-1">{% if is_reorder %}<i class="bi bi-arrow-repeat me-2"></i>Reorder from #{{ original_order.order_id }}{% else %}<i class="bi bi-plus-circle me-2"></i>Create New Order{% endif %}</h2>
+                <p class="mb-0 opacity-75 small">Fill in the details below to book your courier service across New Zealand</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                <span class="badge bg-white text-primary px-3 py-1">
+                    <i class="bi bi-shield-check me-1"></i>Secure & Compliant
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="py-3">
+    <div class="container-fluid px-4">
+        <div class="row g-4">
+            <!-- Left Sidebar - Prohibited Items -->
+            <div class="col-lg-3">
+                <div class="card border-danger sticky-top" style="top: 80px;">
+                    <div class="card-header bg-danger text-white py-2">
+                        <h6 class="mb-0 small"><i class="bi bi-exclamation-triangle-fill me-2"></i>Prohibited Items</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <p class="small mb-1"><strong>Strictly prohibited:</strong></p>
+                        <ul class="small mb-2 ps-3" style="font-size: 0.8rem;">
+                            <li>Illegal drugs/narcotics</li>
+                            <li>Weapons/firearms</li>
+                            <li>Explosives</li>
+                            <li>Hazardous materials</li>
+                            <li>Stolen goods</li>
+                            <li>Items violating NZ laws</li>
+                        </ul>
+                        <div class="alert alert-warning p-1 mb-0" style="font-size: 0.75rem;">
+                            <strong>⚠️</strong> Illegal to ship prohibited items. Parcels may be inspected.
+                        </div>
+                        <div class="mt-2 text-center">
+                            <a href="{% url 'core:terms' %}" class="btn btn-sm btn-outline-danger" target="_blank">
+                                <i class="bi bi-file-text me-1"></i>Full Terms
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Center - Main Form -->
+            <div class="col-lg-6">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white py-2">
+                        <h5 class="mb-0"><i class="bi bi-box-seam me-2"></i>{% if is_reorder %}Reorder Form{% else %}New Courier Order{% endif %}</h5>
+                    </div>
+                    <div class="card-body p-3">
+                        <form method="post" enctype="multipart/form-data" id="orderForm">
+                            {% csrf_token %}
+                            
+                            <!-- Hidden fields for coordinates -->
+                            <input type="hidden" id="pickup_lat" name="pickup_lat">
+                            <input type="hidden" id="pickup_lng" name="pickup_lng">
+                            <input type="hidden" id="delivery_lat" name="delivery_lat">
+                            <input type="hidden" id="delivery_lng" name="delivery_lng">
+                            
+                            <!-- Parcel Type Section -->
+                            <h6 class="mb-3 pb-2 border-bottom text-primary">
+                                <i class="bi bi-box-seam me-2"></i>Parcel Type
+                            </h6>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.parcel_type.id_for_label }}" class="form-label fw-bold mb-1">
+                                    Type of Parcel *
+                                </label>
+                                {% render_field form.parcel_type class="form-control" id="parcel-type-select" %}
+                                {% if form.parcel_type.errors %}
+                                    <div class="text-danger small mt-1">{{ form.parcel_type.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted">Fragile items have higher handling fees.</small>
+                            </div>
+                            
+                            <!-- Other Type Description Note (shown only when OTHER is selected) -->
+                            <div class="alert alert-warning py-2 px-3 mb-3" id="other-type-description-container" style="display: none;">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <small><strong>You selected 'Other'</strong> - Please describe your parcel type in the "Description / Special Instructions" field below.</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.delivery_speed.id_for_label }}" class="form-label fw-bold mb-1">
+                                    <i class="bi bi-lightning-charge text-warning me-1"></i>Delivery Type *
+                                </label>
+                                {% render_field form.delivery_speed class="form-control" %}
+                                {% if form.delivery_speed.errors %}
+                                    <div class="text-danger small mt-1">{{ form.delivery_speed.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted">Choose delivery type. Express/Same Day/Overnight options affect pricing.</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" name="is_oversize" id="id_is_oversize" class="form-check-input">
+                                    <label for="id_is_oversize" class="form-check-label fw-bold">
+                                        <i class="bi bi-box-seam text-warning me-1"></i>Oversize Item
+                                    </label>
+                                </div>
+                                <small class="text-muted">Check if item is too large for a standard car (e.g., longer than 1m or bulky dimensions requiring a van)</small>
+                            </div>
+                            
+                            <!-- Address Section -->
+                            <h6 class="mb-3 pb-2 border-bottom text-primary mt-3">
+                                <i class="bi bi-geo-alt me-2"></i>Addresses
+                            </h6>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.pickup_address.id_for_label }}" class="form-label fw-bold mb-1">
+                                    Pickup Address *
+                                </label>
+                                {% render_field form.pickup_address class="form-control" %}
+                                {% if form.pickup_address.errors %}
+                                    <div class="text-danger small mt-1">{{ form.pickup_address.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted">{% if google_maps_api_key %}Use autocomplete or type manually{% else %}Full address: street number, street, suburb, city, postal code{% endif %}</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.delivery_address.id_for_label }}" class="form-label fw-bold mb-1">
+                                    Delivery Address *
+                                </label>
+                                {% render_field form.delivery_address class="form-control" %}
+                                {% if form.delivery_address.errors %}
+                                    <div class="text-danger small mt-1">{{ form.delivery_address.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted">{% if google_maps_api_key %}Use autocomplete or type manually{% else %}Full address: street number, street, suburb, city, postal code{% endif %}</small>
+                            </div>
+                            
+                            {% if google_maps_api_key %}
+                            <div class="text-center mb-3">
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="calculateManually()">
+                                    <i class="bi bi-calculator me-1"></i>Calculate Quote for Manual Address
+                                </button>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Parcel Details Section -->
+                            <h6 class="mb-3 pb-2 border-bottom text-primary mt-3">
+                                <i class="bi bi-box me-2"></i>Parcel Details
+                            </h6>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.parcel_weight.id_for_label }}" class="form-label fw-bold">
+                                        Weight (kg) *
+                                    </label>
+                                    {% render_field form.parcel_weight class="form-control" %}
+                                    {% if form.parcel_weight.errors %}
+                                        <div class="text-danger small mt-1">{{ form.parcel_weight.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.quantity.id_for_label }}" class="form-label fw-bold">
+                                        Quantity *
+                                    </label>
+                                    {% render_field form.quantity class="form-control" %}
+                                    {% if form.quantity.errors %}
+                                        <div class="text-danger small mt-1">{{ form.quantity.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Dimensions Section -->
+                            <h6 class="mb-3 pb-2 border-bottom text-primary mt-3">
+                                <i class="bi bi-rulers me-2"></i>Dimensions (cm)
+                            </h6>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.length.id_for_label }}" class="form-label fw-bold">
+                                        Length *
+                                    </label>
+                                    {% render_field form.length class="form-control" %}
+                                    {% if form.length.errors %}
+                                        <div class="text-danger small mt-1">{{ form.length.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.width.id_for_label }}" class="form-label fw-bold">
+                                        Width *
+                                    </label>
+                                    {% render_field form.width class="form-control" %}
+                                    {% if form.width.errors %}
+                                        <div class="text-danger small mt-1">{{ form.width.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.height.id_for_label }}" class="form-label fw-bold">
+                                        Height *
+                                    </label>
+                                    {% render_field form.height class="form-control" %}
+                                    {% if form.height.errors %}
+                                        <div class="text-danger small mt-1">{{ form.height.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Information -->
+                            <h6 class="mb-3 pb-2 border-bottom text-primary mt-3">
+                                <i class="bi bi-info-circle me-2"></i>Additional Information
+                            </h6>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-bold mb-1">
+                                    <small>Description / Special Instructions</small>
+                                </label>
+                                {% render_field form.description class="form-control" rows="2" %}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.parcel_image.id_for_label }}" class="form-label fw-bold mb-1">
+                                    Parcel Image (Required) *
+                                </label>
+                                {% render_field form.parcel_image class="form-control" %}
+                                {% if form.parcel_image.errors %}
+                                    <div class="text-danger small mt-1">{{ form.parcel_image.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-warning">
+                                    <i class="bi bi-camera me-1"></i>
+                                    <strong>Required:</strong> Upload clear photo for verification and insurance.
+                                </small>
+                            </div>
+                            
+                            <!-- Estimated quote will be inserted here dynamically -->
+                            
+                            {% if pricing_config.allow_customer_negotiation %}
+                            <div class="mb-3" id="customer-negotiation-field">
+                                <label for="{{ form.customer_proposed_price.id_for_label }}" class="form-label fw-bold mb-1">
+                                    <i class="bi bi-cash-coin me-1"></i>Your Preferred Price (Optional)
+                                </label>
+                                {% render_field form.customer_proposed_price class="form-control" placeholder="e.g., 180.00" %}
+                                {% if form.customer_proposed_price.errors %}
+                                    <div class="text-danger small mt-1">{{ form.customer_proposed_price.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-info">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Have a budget? Enter your preferred price and we'll review your request. Leave blank to accept the estimated quote.
+                                </small>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="legalDeclaration" required>
+                                <label class="form-check-label small" for="legalDeclaration">
+                                    <strong>Legal Declaration:</strong> I confirm that this parcel does not contain any prohibited, illegal, or dangerous items and complies with all NZ laws and regulations. <a href="{% url 'core:terms' %}" target="_blank">Terms & Conditions</a>
+                                </label>
+                            </div>
+                            
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary px-4 py-2" onclick="return validateBeforeSubmit()">
+                                    <i class="bi bi-check-circle me-2"></i>Submit Order
+                                </button>
+                                <a href="{% url 'orders:dashboard' %}" class="btn btn-outline-secondary px-4 py-2">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Sidebar - Pricing Info -->
+            <div class="col-lg-3">
+                <div class="card border-success sticky-top" style="top: 80px;">
+                    <div class="card-header bg-success text-white py-2">
+                        <h6 class="mb-0 small"><i class="bi bi-check-circle me-2"></i>What Happens Next?</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="timeline-steps">
+                            <div class="step-item">
+                                <div class="step-icon">1</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Submit Your Order</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">Fill form with parcel details</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-item">
+                                <div class="step-icon">2</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Instant Quote</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">System calculates price automatically</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-item">
+                                <div class="step-icon">3</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Admin Review</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">Team reviews within 2-4 hours</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-item">
+                                <div class="step-icon">4</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Quote Approval</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">Final price confirmed</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-item">
+                                <div class="step-icon">5</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Secure Payment</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">Pay online safely</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-item">
+                                <div class="step-icon">6</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Parcel Pickup</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">We collect your parcel</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-item">
+                                <div class="step-icon">7</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Track Live</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">Monitor delivery progress</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-item">
+                                <div class="step-icon">8</div>
+                                <div class="step-content">
+                                    <strong style="font-size: 0.85rem;">Delivered</strong>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">With photo proof</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-light border mt-3 mb-0 p-2">
+                            <p class="mb-1" style="font-size: 0.8rem;"><strong>Express Delivery?</strong></p>
+                            <p class="mb-0" style="font-size: 0.75rem; color: #666;">90-minute express requires admin approval for feasibility.</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if google_maps_api_key %}
+<!-- Note: Requires Places API (New) to be enabled in Google Cloud Console -->
+<!-- Visit: https://console.cloud.google.com/apis/library/places-backend.googleapis.com -->
+<script>
+(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.googleapis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+    key: "{{ google_maps_api_key }}",
+    v: "weekly",
+});
+
+let pickupAutocomplete, deliveryAutocomplete;
+
+async function initAutocomplete() {
+    try {
+        // Try to load the Places library
+        const { Autocomplete } = await google.maps.importLibrary("places");
+        
+        // Initialize autocomplete for pickup address
+        const pickupInput = document.getElementById('pickup-address');
+        if (pickupInput) {
+            pickupAutocomplete = new Autocomplete(pickupInput, {
+                componentRestrictions: { country: 'nz' },
+                fields: ['formatted_address', 'address_components', 'geometry', 'name'],
+                types: ['address']
+            });
+            
+            // Prevent form submission on Enter key in autocomplete
+            google.maps.event.addDomListener(pickupInput, 'keydown', function(e) {
+                if (e.keyCode === 13) {
+                    e.preventDefault();
+                }
+            });
+            
+            pickupAutocomplete.addListener('place_changed', function() {
+                const place = pickupAutocomplete.getPlace();
+                console.log('Pickup place selected:', place);
+                
+                if (place.geometry) {
+                    // Get what user originally typed
+                    const userInput = pickupInput.value;
+                    console.log('User typed:', userInput);
+                    
+                    // Build complete address with street number
+                    let address = buildCompleteAddress(place, userInput);
+                    console.log('Built pickup address:', address);
+                    
+                    const lat = place.geometry.location.lat();
+                    const lng = place.geometry.location.lng();
+                    
+                    document.getElementById('pickup_lat').value = lat;
+                    document.getElementById('pickup_lng').value = lng;
+                    
+                    // Set the address value
+                    pickupInput.value = address;
+                    
+                    console.log('Pickup coordinates:', lat, lng);
+                    
+                    // Small delay to ensure values are set
+                    setTimeout(() => {
+                        calculateEstimate();
+                    }, 150);
+                }
+            });
+        }
+        
+        // Initialize autocomplete for delivery address
+        const deliveryInput = document.getElementById('delivery-address');
+        if (deliveryInput) {
+            deliveryAutocomplete = new Autocomplete(deliveryInput, {
+                componentRestrictions: { country: 'nz' },
+                fields: ['formatted_address', 'address_components', 'geometry', 'name'],
+                types: ['address']
+            });
+            
+            // Prevent form submission on Enter key in autocomplete
+            google.maps.event.addDomListener(deliveryInput, 'keydown', function(e) {
+                if (e.keyCode === 13) {
+                    e.preventDefault();
+                }
+            });
+            
+            deliveryAutocomplete.addListener('place_changed', function() {
+                const place = deliveryAutocomplete.getPlace();
+                console.log('Delivery place selected:', place);
+                
+                if (place.geometry) {
+                    // Get what user originally typed
+                    const userInput = deliveryInput.value;
+                    console.log('User typed:', userInput);
+                    
+                    // Build complete address with street number
+                    let address = buildCompleteAddress(place, userInput);
+                    console.log('Built delivery address:', address);
+                    
+                    const lat = place.geometry.location.lat();
+                    const lng = place.geometry.location.lng();
+                    
+                    document.getElementById('delivery_lat').value = lat;
+                    document.getElementById('delivery_lng').value = lng;
+                    
+                    // Set the address value
+                    deliveryInput.value = address;
+                    
+                    console.log('Delivery coordinates:', lat, lng);
+                    
+                    // Small delay to ensure values are set
+                    setTimeout(() => {
+                        calculateEstimate();
+                    }, 150);
+                }
+            });
+        }
+        
+        // Helper function to build complete address with street number
+        function buildCompleteAddress(place, userInput) {
+            let address = '';
+            let streetNumber = '';
+            let route = '';
+            let locality = '';
+            let area = '';
+            let postalCode = '';
+            
+            // Extract address components
+            if (place.address_components) {
+                for (let component of place.address_components) {
+                    const types = component.types;
+                    
+                    if (types.includes('street_number')) {
+                        streetNumber = component.long_name;
+                    }
+                    if (types.includes('route')) {
+                        route = component.long_name;
+                    }
+                    if (types.includes('locality') || types.includes('postal_town')) {
+                        locality = component.long_name;
+                    }
+                    if (types.includes('sublocality') || types.includes('sublocality_level_1')) {
+                        area = component.long_name;
+                    }
+                    if (types.includes('postal_code')) {
+                        postalCode = component.long_name;
+                    }
+                }
+                
+                // If no street number from Google, try to extract from user input
+                if (!streetNumber && userInput) {
+                    const match = userInput.match(/^(\d+[A-Za-z]?)\s+/);
+                    if (match) {
+                        streetNumber = match[1];
+                        console.log('Extracted street number from user input:', streetNumber);
+                    }
+                }
+                
+                // Build address ensuring street number is included
+                if (streetNumber && route) {
+                    address = streetNumber + ' ' + route;
+                } else if (route) {
+                    address = route;
+                }
+                
+                if (area && area !== locality) {
+                    address += ', ' + area;
+                }
+                if (locality) {
+                    address += ', ' + locality;
+                }
+                if (postalCode) {
+                    address += ' ' + postalCode;
+                }
+            }
+            
+            // Fallback to formatted_address if building fails
+            if (!address) {
+                address = place.formatted_address;
+            }
+            
+            return address;
+        }
+        
+        console.log('Google Maps autocomplete initialized successfully');
+        
+        // Hide the info message if autocomplete loads successfully
+        const infoBox = document.getElementById('gmaps-info');
+        if (infoBox) {
+            infoBox.style.display = 'none';
+        }
+    } catch (error) {
+        console.warn('Google Maps autocomplete not available:', error.message);
+        console.log('Address geocoding will still work on form submission.');
+        // Show helpful message - already visible by default
+        // Autocomplete not available, but backend geocoding will still work
+    }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAutocomplete);
+} else {
+    initAutocomplete();
+}
+
+function calculateEstimate() {
+    const pickupLat = document.getElementById('pickup_lat').value;
+    const pickupLng = document.getElementById('pickup_lng').value;
+    const deliveryLat = document.getElementById('delivery_lat').value;
+    const deliveryLng = document.getElementById('delivery_lng').value;
+    const weight = parseFloat(document.querySelector('input[name="parcel_weight"]').value) || 0;
+    const parcelType = document.querySelector('select[name="parcel_type"]').value;
+    const deliverySpeed = document.querySelector('select[name="delivery_speed"]')?.value || 'SAME_DAY';
+    const isOversize = document.getElementById('id_is_oversize')?.checked || false;
+    
+    if (pickupLat && pickupLng && deliveryLat && deliveryLng && weight > 0) {
+        // Step 1: Calculate distance using Google Maps Distance Matrix
+        const service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix({
+            origins: [new google.maps.LatLng(pickupLat, pickupLng)],
+            destinations: [new google.maps.LatLng(deliveryLat, deliveryLng)],
+            travelMode: 'DRIVING',
+            unitSystem: google.maps.UnitSystem.METRIC,
+        }, function(response, status) {
+            if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+                const distanceKm = response.rows[0].elements[0].distance.value / 1000;
+                
+                // Step 2: Call backend API for pricing calculation (Single Source of Truth)
+                const apiUrl = new URL('{% url "orders:calculate_quote_api" %}', window.location.origin);
+                apiUrl.searchParams.set('distance', distanceKm.toFixed(2));
+                apiUrl.searchParams.set('weight', weight);
+                apiUrl.searchParams.set('parcel_type', parcelType);
+                apiUrl.searchParams.set('delivery_speed', deliverySpeed);
+                apiUrl.searchParams.set('is_oversize', isOversize);
+                
+                console.log('=== CALLING PRICING API ===');
+                console.log('API URL:', apiUrl.toString());
+                console.log('Params:', {distance: distanceKm.toFixed(2), weight, parcelType, deliverySpeed, isOversize});
+                
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('=== PRICING API RESPONSE ===');
+                            console.log('Tier:', data.breakdown.tier_name);
+                            console.log('Distance:', data.breakdown.distance_km, 'km');
+                            console.log('Weight:', data.breakdown.weight_kg, 'kg');
+                            console.log('Rate:', '$' + data.breakdown.rate_per_km + '/km', '(' + data.breakdown.rate_type + ')');
+                            console.log('Base Cost:', '$' + data.breakdown.base_cost);
+                            console.log('Type:', data.breakdown.parcel_type, '(' + data.breakdown.type_multiplier + 'x)');
+                            console.log('Speed Adjustment:', '$' + data.breakdown.speed_adjustment, data.breakdown.speed_note);
+                            console.log('Final Estimate:', '$' + data.estimate);
+                            console.log('Requires Approval:', data.requires_admin_approval);
+                            
+                            // Display estimate with full breakdown
+                            showEstimate(distanceKm, data.estimate, deliverySpeed, data);
+                        } else {
+                            console.error('Pricing API Error:', data.error);
+                            // Show error message
+                            showEstimateError(data.error || 'Unable to calculate quote');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+                        showEstimateError('Unable to connect to pricing service');
+                    });
+            }
+        });
+    }
+}
+
+function showEstimateError(message) {
+    // Remove existing estimate if any
+    const existing = document.getElementById('price-estimate');
+    if (existing) existing.remove();
+    
+    const estimateDiv = document.createElement('div');
+    estimateDiv.id = 'price-estimate';
+    estimateDiv.className = 'alert alert-danger mt-3';
+    estimateDiv.innerHTML = `
+        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Quote Error</h5>
+        <p class="mb-0">${message}</p>
+    `;
+    
+    const form = document.getElementById('orderForm');
+    const submitDiv = form.querySelector('.d-flex.gap-3');
+    form.insertBefore(estimateDiv, submitDiv);
+}
+
+function showEstimate(distance, price, deliverySpeed, apiData) {
+    // Remove existing estimate if any
+    const existing = document.getElementById('price-estimate');
+    if (existing) existing.remove();
+    
+    // Create estimate display
+    const estimateDiv = document.createElement('div');
+    estimateDiv.id = 'price-estimate';
+    
+    // Different styling for express delivery (admin approval)
+    let alertClass = 'alert-success';
+    let priceNote = 'Final price may vary after admin review';
+    
+    if (apiData && apiData.requires_admin_approval) {
+        alertClass = 'alert-warning';
+        priceNote = '<strong>Note:</strong> This delivery option requires admin approval. Price shown is estimate only.';
+    } else if (deliverySpeed === 'OVERNIGHT') {
+        priceNote = 'Includes overnight delivery surcharge';
+    }
+    
+    // Build breakdown HTML if API data available
+    let breakdownHtml = '';
+    if (apiData && apiData.breakdown) {
+        const b = apiData.breakdown;
+        let formulaHtml = b.formula || '';
+        let oversizeNote = b.is_oversize ? '<span class="badge bg-warning text-dark ms-1">Oversize</span>' : '';
+        
+        breakdownHtml = `
+            <hr class="my-2">
+            <small class="text-muted">
+                <strong>Breakdown:</strong><br>
+                Type: ${b.delivery_type} ${oversizeNote}<br>
+                Rule: ${b.rule_name}<br>
+                Formula: ${formulaHtml}
+            </small>
+        `;
+    }
+    
+    estimateDiv.className = 'alert ' + alertClass + ' mt-3';
+    estimateDiv.innerHTML = `
+        <h5 class="alert-heading"><i class="bi bi-calculator me-2"></i>Estimated Quote</h5>
+        <p class="mb-1"><strong>Distance:</strong> ${distance.toFixed(2)} km</p>
+        <p class="mb-0"><strong>Estimated Price:</strong> <span class="fs-4 text-success">NZD $${price.toFixed(2)}</span></p>
+        ${breakdownHtml}
+        <small class="text-muted d-block mt-2">${priceNote}</small>
+    `;
+    
+    // Insert before the customer proposed price field (if it exists) or submit button
+    const form = document.getElementById('orderForm');
+    let targetElement = form.querySelector('[name="customer_proposed_price"]')?.closest('.mb-3');
+    if (!targetElement) {
+        targetElement = form.querySelector('.alert.alert-success');
+    }
+    if (targetElement) {
+        form.insertBefore(estimateDiv, targetElement);
+    } else {
+        const submitDiv = form.querySelector('.d-flex.gap-3');
+        form.insertBefore(estimateDiv, submitDiv);
+    }
+}
+
+// Manual calculation for free-form addresses
+async function calculateManually() {
+    const pickupAddress = document.getElementById('pickup-address').value;
+    const deliveryAddress = document.getElementById('delivery-address').value;
+    
+    if (!pickupAddress || !deliveryAddress) {
+        alert('Please enter both pickup and delivery addresses');
+        return;
+    }
+    
+    // Show loading
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Calculating...';
+    btn.disabled = true;
+    
+    try {
+        const { Geocoder } = await google.maps.importLibrary("geocoding");
+        const geocoder = new Geocoder();
+        
+        // Geocode pickup address
+        const pickupResult = await geocoder.geocode({ 
+            address: pickupAddress + ', New Zealand',
+            componentRestrictions: { country: 'nz' }
+        });
+        
+        // Geocode delivery address
+        const deliveryResult = await geocoder.geocode({ 
+            address: deliveryAddress + ', New Zealand',
+            componentRestrictions: { country: 'nz' }
+        });
+        
+        if (pickupResult.results[0] && deliveryResult.results[0]) {
+            const pickupLoc = pickupResult.results[0].geometry.location;
+            const deliveryLoc = deliveryResult.results[0].geometry.location;
+            
+            document.getElementById('pickup_lat').value = pickupLoc.lat();
+            document.getElementById('pickup_lng').value = pickupLoc.lng();
+            document.getElementById('delivery_lat').value = deliveryLoc.lat();
+            document.getElementById('delivery_lng').value = deliveryLoc.lng();
+            
+            // Update address fields with formatted addresses
+            document.getElementById('pickup-address').value = pickupResult.results[0].formatted_address;
+            document.getElementById('delivery-address').value = deliveryResult.results[0].formatted_address;
+            
+            calculateEstimate();
+        } else {
+            alert('Could not find one or both addresses. Please check and try again.');
+        }
+    } catch (error) {
+        console.error('Geocoding error:', error);
+        alert('Error calculating address. Please ensure addresses are valid NZ addresses.');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// Validate coordinates before submission
+function validateBeforeSubmit() {
+    const pickupLat = document.getElementById('pickup_lat').value;
+    const pickupLng = document.getElementById('pickup_lng').value;
+    const deliveryLat = document.getElementById('delivery_lat').value;
+    const deliveryLng = document.getElementById('delivery_lng').value;
+    
+    console.log('Form submission - Coordinates:', {
+        pickup: [pickupLat, pickupLng],
+        delivery: [deliveryLat, deliveryLng]
+    });
+    
+    // Always allow submission - backend will handle geocoding if needed
+    return true;
+}
+
+// Trigger calculation when weight, parcel type, or delivery speed changes
+document.addEventListener('DOMContentLoaded', function() {
+    const weightInput = document.querySelector('input[name="parcel_weight"]');
+    const typeSelect = document.querySelector('select[name="parcel_type"]');
+    const deliverySpeedSelect = document.querySelector('select[name="delivery_speed"]');
+    const otherDescContainer = document.getElementById('other-type-description-container');
+    const otherDescInput = document.getElementById('other-type-description');
+    
+    // Function to show/hide "Other" description note
+    function toggleOtherDescription() {
+        const descriptionField = document.getElementById('id_description');
+        if (typeSelect && otherDescContainer) {
+            if (typeSelect.value === 'OTHER') {
+                otherDescContainer.style.display = 'block';
+                // Highlight the description field
+                if (descriptionField) {
+                    descriptionField.classList.add('border-warning');
+                    descriptionField.placeholder = 'REQUIRED: Describe your parcel type (e.g., Musical instrument, Sports equipment, Artwork, etc.)';
+                }
+            } else {
+                otherDescContainer.style.display = 'none';
+                if (descriptionField) {
+                    descriptionField.classList.remove('border-warning');
+                    descriptionField.placeholder = 'Any special handling instructions or notes...';
+                }
+            }
+        }
+    }
+    
+    // Initial check on page load
+    toggleOtherDescription();
+    
+    if (weightInput) {
+        weightInput.addEventListener('blur', calculateEstimate);
+    }
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            toggleOtherDescription();
+            calculateEstimate();
+        });
+    }
+    if (deliverySpeedSelect) {
+        deliverySpeedSelect.addEventListener('change', calculateEstimate);
+    }
+    
+    // Oversize checkbox trigger
+    const oversizeCheckbox = document.getElementById('id_is_oversize');
+    if (oversizeCheckbox) {
+        oversizeCheckbox.addEventListener('change', calculateEstimate);
+    }
+});
+</script>
+{% else %}
+<script>
+    // No Google Maps API key - show message
+    document.addEventListener('DOMContentLoaded', function() {
+        const pickupInput = document.getElementById('pickup-address');
+        const deliveryInput = document.getElementById('delivery-address');
+        
+        if (pickupInput) {
+            pickupInput.placeholder += ' (e.g., 123 Queen Street, Auckland, New Zealand)';
+        }
+        if (deliveryInput) {
+            deliveryInput.placeholder += ' (e.g., 456 Lambton Quay, Wellington, New Zealand)';
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}
+

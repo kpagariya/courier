@@ -1,0 +1,650 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Courier System - Fast & Reliable Delivery{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary-color: #0ea5e9;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --dark-color: #0f172a;
+            --light-color: #f1f5f9;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdfa 100%);
+            min-height: 100vh;
+        }
+        
+        /* Modern Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1e293b 100%);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            padding: 0.8rem 0;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1050;
+        }
+        
+        .navbar .dropdown-menu {
+            z-index: 1060;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+        
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+        }
+        
+        .brand-tagline {
+            font-size: 0.65rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            opacity: 0.85;
+            font-style: italic;
+            color: var(--accent-color);
+        }
+        
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin: 0 0.3rem;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link.active {
+            background: var(--primary-color);
+            color: white !important;
+        }
+        
+        /* Modern Buttons */
+        .btn {
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--dark-color) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        }
+        
+        .btn-info:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+            color: white;
+        }
+        
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+        
+        footer {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1e293b 100%);
+            color: white;
+            padding: 4rem 0 1.5rem;
+            margin-top: 0;
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--success-color));
+        }
+        
+        footer a {
+            transition: all 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: var(--accent-color) !important;
+            transform: translateY(-3px);
+            display: inline-block;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            backdrop-filter: blur(10px);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 30%, #cffafe 60%, #d1fae5 100%);
+            color: var(--dark-color);
+            padding: 3rem 0;
+            margin-bottom: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        /* Animated gradient border */
+        .gradient-border {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color), var(--success-color));
+            z-index: -1;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1.25rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Custom badge colors with gradients */
+        .bg-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+        }
+        
+        .bg-info {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+        }
+        
+        .bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        }
+        
+        .bg-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+        }
+        
+        .bg-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+        }
+        
+        .bg-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+            color: white !important;
+        }
+        
+        /* Form inputs modern style */
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Section spacing */
+        section {
+            padding: 3rem 0;
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Loading animation for buttons */
+        .btn .spinner-border {
+            width: 1rem;
+            height: 1rem;
+            border-width: 2px;
+        }
+        
+        .badge.bg-purple {
+            background-color: #8b5cf6 !important;
+            color: white !important;
+        }
+        
+        /* Admin breadcrumb styling */
+        .breadcrumb {
+            --bs-breadcrumb-divider-color: rgba(255, 255, 255, 0.6);
+            --bs-breadcrumb-item-active-color: #ffffff;
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
+                <img src="{% static 'images/logo1.jpg' %}" alt="Helpii" height="55" style="max-width: 180px;" class="me-2">
+                <div class="brand-text">
+                    <span class="brand-name">Helpii</span>
+                    <span class="brand-tagline">Because Time Matters the Most</span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:services' %}">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders:track_order' %}">
+                            <i class="bi bi-search me-1"></i>Track Order
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:contact' %}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:career' %}">Career</a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle me-1"></i>{{ user.get_short_name }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% if user.is_staff %}
+                                    <!-- ADMIN MENU ONLY -->
+                                    <li><h6 class="dropdown-header text-primary">
+                                        <i class="bi bi-shield-check me-1"></i>Admin Panel
+                                    </h6></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:admin_dashboard' %}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">
+                                        <i class="bi bi-list-check me-2"></i>Manage Orders
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:admin_concern_list' %}">
+                                        <i class="bi bi-chat-dots me-2"></i>Manage Concerns
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'admin:index' %}">
+                                        <i class="bi bi-gear me-2"></i>Django Admin Panel
+                                    </a></li>
+                                {% else %}
+                                    <!-- CUSTOMER MENU ONLY -->
+                                    <li><a class="dropdown-item" href="{% url 'orders:dashboard' %}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:order_list' %}">
+                                        <i class="bi bi-list-ul me-2"></i>My Orders
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:create_order' %}">
+                                        <i class="bi bi-plus-circle me-2"></i>New Order
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'payments:payment_history' %}">
+                                        <i class="bi bi-credit-card me-2"></i>Payment History
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:concern_list' %}">
+                                        <i class="bi bi-chat-left-text me-2"></i>My Concerns
+                                    </a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-light btn-sm ms-2 rounded-pill px-3" href="{% url 'accounts:register' %}">
+                                <i class="bi bi-person-plus me-1"></i>Register
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Social Media Icons in Header -->
+                <div class="d-none d-lg-flex align-items-center ms-3 gap-2">
+                    <a href="https://facebook.com/helpii" target="_blank" class="header-social-icon" title="Facebook">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://instagram.com/helpii" target="_blank" class="header-social-icon" title="Instagram">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://twitter.com/helpii" target="_blank" class="header-social-icon" title="Twitter">
+                        <i class="bi bi-twitter-x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{% if message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+    
+    <!-- Modern Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <!-- Brand Column -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="footer-logo me-3">
+                            <i class="bi bi-box-seam fs-3"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">Helpii</h4>
+                            <small class="text-white-50">Because Time Matters</small>
+                        </div>
+                    </div>
+                    <p class="text-white-50 small mb-4">Fast, reliable, and secure courier services across Auckland. Your parcels, delivered with care.</p>
+                    
+                    <!-- Social Icons - Modern Style -->
+                    <div class="d-flex gap-2">
+                        <a href="#" class="footer-social-btn"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="footer-social-btn"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="footer-social-btn"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="footer-social-btn"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4 text-white-50">Company</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'core:about' %}" class="footer-link">About Us</a></li>
+                        <li class="mb-2"><a href="{% url 'core:services' %}" class="footer-link">Services</a></li>
+                        <li class="mb-2"><a href="{% url 'core:career' %}" class="footer-link">Careers</a></li>
+                        <li class="mb-2"><a href="{% url 'core:contact' %}" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Legal Links -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4 text-white-50">Legal</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'core:terms' %}" class="footer-link">Terms of Service</a></li>
+                        <li class="mb-2"><a href="{% url 'core:privacy' %}" class="footer-link">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="{% url 'core:terms' %}" class="footer-link">Shipping Policy</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4 text-white-50">Get in Touch</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="bi bi-geo-alt-fill text-primary me-3 mt-1"></i>
+                            <span class="text-white-50 small">Auckland, New Zealand</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-telephone-fill text-primary me-3"></i>
+                            <span class="text-white-50 small">+64 9 XXX XXXX</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-envelope-fill text-primary me-3"></i>
+                            <span class="text-white-50 small">hello@helpii.co.nz</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-clock-fill text-primary me-3"></i>
+                            <span class="text-white-50 small">Mon - Fri: 8AM - 6PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Footer Bottom -->
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 text-white-50 small">&copy; 2024 Helpii. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <span class="text-white-50 small">Made with <i class="bi bi-heart-fill text-danger"></i> in Auckland</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <style>
+    /* Footer Styles */
+    .footer-logo {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #0891b2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .footer-social-btn {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .footer-social-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+    }
+    
+    /* Header Social Icons */
+    .header-social-icon {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+    
+    .header-social-icon[title="Facebook"] {
+        background: #1877f2;
+        color: white;
+    }
+    
+    .header-social-icon[title="Instagram"] {
+        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        color: white;
+    }
+    
+    .header-social-icon[title="Twitter"] {
+        background: #000000;
+        color: white;
+    }
+    
+    .header-social-icon:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        color: white;
+    }
+    
+    .footer-link {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .footer-link:hover {
+        color: var(--accent-color);
+        padding-left: 5px;
+    }
+    </style>
+    
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

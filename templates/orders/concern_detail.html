@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Concern #{{ concern.id }} - CourierPro{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold">Concern #{{ concern.id }}</h2>
+                <p class="text-muted mb-0">Order: <a href="{% url 'orders:order_detail' concern.order.order_id %}">{{ concern.order.order_id }}</a></p>
+            </div>
+            <span class="badge bg-{% if concern.status == 'RESOLVED' %}success{% elif concern.status == 'IN_PROGRESS' %}primary{% else %}warning{% endif %} fs-6">
+                {{ concern.get_status_display }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Concern Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Type:</strong> {{ concern.get_concern_type_display }}
+                        </div>
+                        <div class="mb-3">
+                            <strong>Subject:</strong> {{ concern.subject }}
+                        </div>
+                        <div class="mb-3">
+                            <strong>Description:</strong>
+                            <p class="mt-2">{{ concern.description }}</p>
+                        </div>
+                        {% if concern.concern_image %}
+                        <div class="mb-3">
+                            <strong>Photo:</strong><br>
+                            <img src="{{ concern.concern_image.url }}" alt="Concern" class="img-fluid rounded mt-2" style="max-height: 400px;">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if concern.admin_response %}
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-reply me-2"></i>Admin Response</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">{{ concern.admin_response }}</p>
+                        {% if concern.resolved_at %}
+                        <small class="text-muted d-block mt-2">
+                            Resolved on: {{ concern.resolved_at|date:"F d, Y \a\\t h:i A" }}
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-clock-history me-2"></i>
+                    Your concern is being reviewed. You'll receive a response within 24-48 hours.
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">Concern ID</small>
+                            <p class="mb-0 fw-bold">#{{ concern.id }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Order ID</small>
+                            <p class="mb-0">
+                                <a href="{% url 'orders:order_detail' concern.order.order_id %}">
+                                    {{ concern.order.order_id }}
+                                </a>
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Status</small>
+                            <p class="mb-0">
+                                <span class="badge bg-{% if concern.status == 'RESOLVED' %}success{% elif concern.status == 'IN_PROGRESS' %}primary{% else %}warning{% endif %}">
+                                    {{ concern.get_status_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Created</small>
+                            <p class="mb-0">{{ concern.created_at|date:"M d, Y h:i A" }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Last Updated</small>
+                            <p class="mb-0">{{ concern.updated_at|date:"M d, Y h:i A" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{% url 'orders:concern_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Concerns
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

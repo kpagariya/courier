@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Career Opportunities - Helpii{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-center">Join Our Team</h1>
+        <p class="lead text-center">Be part of New Zealand's fastest growing courier company</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">Why Work With Us?</h2>
+                <p class="lead text-muted">We offer competitive salaries, flexible working hours, and a supportive work environment. Join us and grow your career in the logistics industry.</p>
+            </div>
+        </div>
+        
+        <h3 class="mb-4">Current Openings</h3>
+        <div class="row g-4">
+            {% for job in job_openings %}
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <h4 class="mb-3">{{ job.title }}</h4>
+                    <p class="mb-2"><i class="bi bi-geo-alt me-2"></i><strong>Location:</strong> {{ job.location }}</p>
+                    <p class="mb-3"><i class="bi bi-briefcase me-2"></i><strong>Type:</strong> {{ job.type }}</p>
+                    <p class="text-muted">{{ job.description }}</p>
+                    <a href="{% url 'core:contact' %}" class="btn btn-primary mt-2">
+                        <i class="bi bi-file-earmark-text me-2"></i>Apply Now
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <p class="lead">Don't see a suitable position? Send us your CV at <a href="mailto:careers@courierpro.co.nz">careers@courierpro.co.nz</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

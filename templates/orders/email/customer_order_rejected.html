@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; }
+        .header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 30px 20px; text-align: center; }
+        .content { padding: 30px 20px; }
+        .button { display: inline-block; padding: 12px 30px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        .footer { background: #f8f9fa; text-align: center; padding: 20px; color: #666; font-size: 12px; border-top: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Order Update</h1>
+            <p style="font-size: 18px;">{{ order.order_id }}</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear <strong>{{ order.customer.get_full_name }}</strong>,</p>
+            
+            <p>We regret to inform you that we're unable to process your order at this time.</p>
+            
+            {% if order.admin_notes %}
+            <div style="background: #f8d7da; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;">
+                <h4 style="margin-top: 0; color: #721c24;">Reason:</h4>
+                <p style="margin: 0; color: #721c24;">{{ order.admin_notes }}</p>
+            </div>
+            {% endif %}
+            
+            <p>We apologize for any inconvenience. You may:</p>
+            <ul>
+                <li>Contact us to discuss alternative arrangements</li>
+                <li>Submit a new order with updated details</li>
+            </ul>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="mailto:support@courierpro.com" class="button">Contact Support</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Helpii</strong> - Customer Service</p>
+            <p>© 2024 Helpii. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+

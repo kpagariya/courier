@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; }
+        .header { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 30px 20px; text-align: center; }
+        .content { padding: 30px 20px; }
+        .button { display: inline-block; padding: 12px 30px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        .footer { background: #f8f9fa; text-align: center; padding: 20px; color: #666; font-size: 12px; border-top: 1px solid #dee2e6; }
+        .status-badge { background: #8b5cf6; color: white; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 Out for Delivery!</h1>
+            <p style="font-size: 18px;">{{ order.order_id }}</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear <strong>{{ order.customer.get_full_name }}</strong>,</p>
+            
+            <p>Exciting news! Your parcel is now <strong>on the way</strong> to your delivery address.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <span class="status-badge">🚚 ON THE WAY</span>
+            </div>
+            
+            <div style="background: #f3e8ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                <h3 style="margin: 0 0 10px 0; color: #7c3aed;">Delivering To</h3>
+                <p style="font-size: 18px; margin: 0; color: #6d28d9;">📍 {{ order.delivery_address }}</p>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <p style="margin: 0; color: #856404;">
+                    <strong>⏰ Expected Delivery:</strong> Soon!<br>
+                    Please ensure someone is available to receive the parcel.
+                </p>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ order.get_absolute_url }}" class="button">Track Live</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Helpii</strong> - Almost there!</p>
+            <p>© 2024 Helpii. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+

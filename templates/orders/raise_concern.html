@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Raise Concern - Order #{{ order.order_id }} - CourierPro{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4">
+    <div class="container">
+        <h2 class="fw-bold">Raise Concern</h2>
+        <p class="text-muted mb-0">Report an issue with your delivered order #{{ order.order_id }}</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="alert alert-warning mb-4">
+                    <h5 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Before You Submit</h5>
+                    <p class="mb-0">Please provide detailed information about your concern. Include photos if possible. Our team will review and respond within 24-48 hours.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body p-4">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.concern_type.id_for_label }}" class="form-label fw-bold">
+                                    Type of Concern *
+                                </label>
+                                {% render_field form.concern_type class="form-control" %}
+                                {% if form.concern_type.errors %}
+                                    <div class="text-danger small mt-1">{{ form.concern_type.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label fw-bold">
+                                    Subject *
+                                </label>
+                                {% render_field form.subject class="form-control" %}
+                                {% if form.subject.errors %}
+                                    <div class="text-danger small mt-1">{{ form.subject.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                    Detailed Description *
+                                </label>
+                                {% render_field form.description class="form-control" %}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted">Please provide as much detail as possible about the issue</small>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.concern_image.id_for_label }}" class="form-label fw-bold">
+                                    Photo of Issue
+                                </label>
+                                {% render_field form.concern_image class="form-control" %}
+                                {% if form.concern_image.errors %}
+                                    <div class="text-danger small mt-1">{{ form.concern_image.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted">Upload a photo showing the problem (highly recommended)</small>
+                            </div>
+                            
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-danger px-4">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Submit Concern
+                                </button>
+                                <a href="{% url 'orders:order_detail' order.order_id %}" class="btn btn-outline-secondary px-4">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Order #{{ order.order_id }} - Helpii{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4">
+    <div class="container">
+        <h2 class="fw-bold">Track Order #{{ order.order_id }}</h2>
+        <p class="text-muted mb-0">Real-time tracking of your parcel</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Current Status Card -->
+                <div class="card mb-5 text-center p-4" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: white;">
+                    <h4 class="mb-3">Current Status</h4>
+                    <h2 class="fw-bold mb-0">{{ order.get_status_display }}</h2>
+                    <p class="mb-0 mt-2">Last updated: {{ order.updated_at|date:"F d, Y \a\\t h:i A" }}</p>
+                </div>
+                
+                <!-- Tracking Timeline -->
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="mb-4">Delivery Timeline</h5>
+                        
+                        <div class="tracking-timeline">
+                            <!-- Order Placed -->
+                            <div class="tracking-step completed">
+                                <div class="tracking-icon">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </div>
+                                <div class="tracking-content">
+                                    <h6 class="fw-bold mb-1">Order Placed</h6>
+                                    <p class="text-muted mb-1">Your order has been received</p>
+                                    <small class="text-muted">{{ order.created_at|date:"M d, Y h:i A" }}</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Order Accepted -->
+                            <div class="tracking-step {% if order.status == 'ACCEPTED' or order.status == 'PICKED' or order.status == 'ON_THE_WAY' or order.status == 'DELIVERED' %}completed{% endif %}">
+                                <div class="tracking-icon">
+                                    <i class="bi bi-{% if order.status == 'ACCEPTED' or order.status == 'PICKED' or order.status == 'ON_THE_WAY' or order.status == 'DELIVERED' %}check-circle-fill{% else %}circle{% endif %}"></i>
+                                </div>
+                                <div class="tracking-content">
+                                    <h6 class="fw-bold mb-1">Order Accepted</h6>
+                                    <p class="text-muted mb-1">Your order has been accepted and processing</p>
+                                    {% if order.accepted_at %}
+                                        <small class="text-muted">{{ order.accepted_at|date:"M d, Y h:i A" }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Picked Up -->
+                            <div class="tracking-step {% if order.status == 'PICKED' or order.status == 'ON_THE_WAY' or order.status == 'DELIVERED' %}completed{% endif %}">
+                                <div class="tracking-icon">
+                                    <i class="bi bi-{% if order.status == 'PICKED' or order.status == 'ON_THE_WAY' or order.status == 'DELIVERED' %}check-circle-fill{% else %}circle{% endif %}"></i>
+                                </div>
+                                <div class="tracking-content">
+                                    <h6 class="fw-bold mb-1">Parcel Picked Up</h6>
+                                    <p class="text-muted mb-1">Your parcel has been picked up</p>
+                                    {% if order.picked_at %}
+                                        <small class="text-muted">{{ order.picked_at|date:"M d, Y h:i A" }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- On the Way -->
+                            <div class="tracking-step {% if order.status == 'ON_THE_WAY' or order.status == 'DELIVERED' %}completed{% endif %}">
+                                <div class="tracking-icon">
+                                    <i class="bi bi-{% if order.status == 'ON_THE_WAY' or order.status == 'DELIVERED' %}check-circle-fill{% else %}circle{% endif %}"></i>
+                                </div>
+                                <div class="tracking-content">
+                                    <h6 class="fw-bold mb-1">Out for Delivery</h6>
+                                    <p class="text-muted mb-1">Your parcel is on the way</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Delivered -->
+                            <div class="tracking-step {% if order.status == 'DELIVERED' %}completed{% endif %}">
+                                <div class="tracking-icon">
+                                    <i class="bi bi-{% if order.status == 'DELIVERED' %}check-circle-fill{% else %}circle{% endif %}"></i>
+                                </div>
+                                <div class="tracking-content">
+                                    <h6 class="fw-bold mb-1">Delivered</h6>
+                                    <p class="text-muted mb-1">Your parcel has been delivered</p>
+                                    {% if order.delivered_at %}
+                                        <small class="text-muted">{{ order.delivered_at|date:"M d, Y h:i A" }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Details Summary -->
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Order Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted mb-1">Order ID</h6>
+                                <p class="mb-0 fw-bold">{{ order.order_id }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted mb-1">Created</h6>
+                                <p class="mb-0">{{ order.created_at|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted mb-1">From</h6>
+                                <p class="mb-0">{{ order.pickup_address|truncatewords:10 }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted mb-1">To</h6>
+                                <p class="mb-0">{{ order.delivery_address|truncatewords:10 }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="{% url 'orders:order_detail' order.order_id %}" class="btn btn-outline-primary">
+                                <i class="bi bi-eye me-2"></i>View Full Details
+                            </a>
+                            <a href="{% url 'orders:order_list' %}" class="btn btn-outline-secondary ms-2">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Orders
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.tracking-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.tracking-step {
+    display: flex;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.tracking-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 22px;
+    top: 50px;
+    bottom: -30px;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.tracking-step.completed:not(:last-child)::after {
+    background-color: var(--success-color);
+}
+
+.tracking-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.tracking-step.completed .tracking-icon {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.tracking-content {
+    margin-left: 20px;
+    flex-grow: 1;
+}
+</style>
+{% endblock %}
+

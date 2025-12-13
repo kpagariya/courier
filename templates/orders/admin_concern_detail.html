@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Concern #{{ concern.id }} - Admin - CourierPro{% endblock %}
+
+{% block content %}
+<div class="bg-dark text-white py-4">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold">Manage Concern #{{ concern.id }}</h2>
+                <p class="mb-0">Order: <a href="{% url 'orders:admin_order_detail' concern.order.order_id %}" class="text-white text-decoration-underline">{{ concern.order.order_id }}</a></p>
+            </div>
+            <span class="badge bg-{% if concern.status == 'RESOLVED' %}success{% elif concern.status == 'IN_PROGRESS' %}primary{% else %}warning{% endif %} fs-6">
+                {{ concern.get_status_display }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <!-- Customer Info -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="bi bi-person me-2"></i>Customer Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Name:</strong> {{ concern.customer.get_full_name }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Email:</strong> {{ concern.customer.email }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Contact:</strong> {{ concern.customer.contact }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Concern Details -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Concern Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Type:</strong> <span class="badge bg-danger">{{ concern.get_concern_type_display }}</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Subject:</strong>
+                            <p class="mb-0">{{ concern.subject }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Description:</strong>
+                            <p>{{ concern.description }}</p>
+                        </div>
+                        {% if concern.concern_image %}
+                        <div class="mb-3">
+                            <strong>Photo Evidence:</strong><br>
+                            <img src="{{ concern.concern_image.url }}" alt="Concern" class="img-fluid rounded mt-2" style="max-height: 400px;">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Response Form -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-reply me-2"></i>Admin Response</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update_status">
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Update Status</label>
+                                <select name="status" class="form-select" required>
+                                    <option value="OPEN" {% if concern.status == 'OPEN' %}selected{% endif %}>Open</option>
+                                    <option value="IN_PROGRESS" {% if concern.status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                                    <option value="RESOLVED" {% if concern.status == 'RESOLVED' %}selected{% endif %}>Resolved</option>
+                                    <option value="CLOSED" {% if concern.status == 'CLOSED' %}selected{% endif %}>Closed</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Admin Response</label>
+                                <textarea name="admin_response" class="form-control" rows="5" placeholder="Enter your response to the customer">{{ concern.admin_response }}</textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Update Concern
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Concern Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">Concern ID</small>
+                            <p class="mb-0 fw-bold">#{{ concern.id }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Order ID</small>
+                            <p class="mb-0">
+                                <a href="{% url 'orders:admin_order_detail' concern.order.order_id %}">
+                                    {{ concern.order.order_id }}
+                                </a>
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Status</small>
+                            <p class="mb-0">
+                                <span class="badge bg-{% if concern.status == 'RESOLVED' %}success{% elif concern.status == 'IN_PROGRESS' %}primary{% else %}warning{% endif %}">
+                                    {{ concern.get_status_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Created</small>
+                            <p class="mb-0">{{ concern.created_at|date:"M d, Y h:i A" }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Last Updated</small>
+                            <p class="mb-0">{{ concern.updated_at|date:"M d, Y h:i A" }}</p>
+                        </div>
+                        {% if concern.resolved_at %}
+                        <div class="mb-3">
+                            <small class="text-muted">Resolved At</small>
+                            <p class="mb-0">{{ concern.resolved_at|date:"M d, Y h:i A" }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'orders:admin_order_detail' concern.order.order_id %}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-box me-2"></i>View Order
+                        </a>
+                        <a href="mailto:{{ concern.customer.email }}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-envelope me-2"></i>Email Customer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{% url 'orders:admin_concern_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Concerns
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

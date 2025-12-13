@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Login - Helpii{% endblock %}
+
+{% block content %}
+<section class="py-5" style="min-height: 80vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <!-- Modern Glass Card -->
+                <div class="card gradient-border" style="overflow: visible;">
+                    <div class="card-body p-5">
+                        <!-- Icon with gradient background -->
+                        <div class="text-center mb-4">
+                            <div class="login-icon mx-auto mb-3">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <h2 class="fw-bold mb-1">Welcome Back</h2>
+                            <p class="text-muted">Login to your Helpii account</p>
+                        </div>
+                        
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.username.id_for_label }}" class="form-label fw-medium">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-envelope text-muted"></i>
+                                    </span>
+                                    {% render_field form.username class="form-control border-start-0" placeholder="your.email@example.com" %}
+                                </div>
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.password.id_for_label }}" class="form-label fw-medium">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-lock text-muted"></i>
+                                    </span>
+                                    {% render_field form.password class="form-control border-start-0" placeholder="Enter your password" %}
+                                </div>
+                                {% if form.password.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                                    <label class="form-check-label small" for="rememberMe">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="{% url 'accounts:password_reset' %}" class="text-primary text-decoration-none small fw-medium">
+                                    Forgot Password?
+                                </a>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 py-3 mb-4 fw-bold">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                            </button>
+                            
+                            <div class="text-center">
+                                <p class="text-muted mb-0 small">
+                                    Don't have an account? 
+                                    <a href="{% url 'accounts:register' %}" class="text-primary text-decoration-none fw-bold">
+                                        Create Account <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'core:home' %}" class="text-muted text-decoration-none small me-3">
+                        <i class="bi bi-house me-1"></i>Home
+                    </a>
+                    <a href="{% url 'orders:track_order' %}" class="text-muted text-decoration-none small me-3">
+                        <i class="bi bi-search me-1"></i>Track Order
+                    </a>
+                    <a href="{% url 'core:contact' %}" class="text-muted text-decoration-none small">
+                        <i class="bi bi-headset me-1"></i>Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.login-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0891b2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Concerns - Admin - CourierPro{% endblock %}
+
+{% block content %}
+<!-- Admin Navigation Bar -->
+<div class="bg-dark text-white py-2 border-bottom border-secondary">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 bg-transparent">
+                    <li class="breadcrumb-item"><a href="{% url 'orders:admin_dashboard' %}" class="text-white text-decoration-none"><i class="bi bi-house-door me-1"></i>Admin Home</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Manage Concerns</li>
+                </ol>
+            </nav>
+            <div class="btn-group btn-group-sm" role="group">
+                <a href="{% url 'orders:admin_dashboard' %}" class="btn btn-outline-light" title="Dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                </a>
+                <a href="{% url 'orders:admin_order_list' %}" class="btn btn-outline-light" title="Orders">
+                    <i class="bi bi-list-check"></i>
+                </a>
+                <a href="{% url 'orders:admin_concern_list' %}" class="btn btn-light" title="Concerns">
+                    <i class="bi bi-chat-dots"></i>
+                </a>
+                <a href="{% url 'admin:index' %}" class="btn btn-outline-light" title="Django Admin">
+                    <i class="bi bi-gear"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-dark text-white py-3">
+    <div class="container">
+        <h2 class="fw-bold mb-1"><i class="bi bi-chat-dots me-2"></i>Manage Customer Concerns</h2>
+        <p class="mb-0 text-light">Review and respond to customer concerns and issues</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <!-- Filter -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="btn-group" role="group">
+                    <a href="{% url 'orders:admin_concern_list' %}" class="btn btn-outline-primary {% if not status_filter %}active{% endif %}">
+                        All Concerns
+                    </a>
+                    <a href="?status=OPEN" class="btn btn-outline-warning {% if status_filter == 'OPEN' %}active{% endif %}">
+                        Open
+                    </a>
+                    <a href="?status=IN_PROGRESS" class="btn btn-outline-info {% if status_filter == 'IN_PROGRESS' %}active{% endif %}">
+                        In Progress
+                    </a>
+                    <a href="?status=RESOLVED" class="btn btn-outline-success {% if status_filter == 'RESOLVED' %}active{% endif %}">
+                        Resolved
+                    </a>
+                    <a href="?status=CLOSED" class="btn btn-outline-secondary {% if status_filter == 'CLOSED' %}active{% endif %}">
+                        Closed
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Concerns Table -->
+        <div class="card">
+            <div class="card-body p-0">
+                {% if concerns %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Type</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for concern in concerns %}
+                                <tr>
+                                    <td><strong>#{{ concern.id }}</strong></td>
+                                    <td>
+                                        <a href="{% url 'orders:admin_order_detail' concern.order.order_id %}">
+                                            {{ concern.order.order_id }}
+                                        </a>
+                                    </td>
+                                    <td>{{ concern.customer.get_full_name }}</td>
+                                    <td>{{ concern.get_concern_type_display }}</td>
+                                    <td>{{ concern.subject|truncatewords:8 }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if concern.status == 'RESOLVED' %}success{% elif concern.status == 'IN_PROGRESS' %}primary{% elif concern.status == 'OPEN' %}warning{% else %}secondary{% endif %}">
+                                            {{ concern.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ concern.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'orders:admin_concern_detail' concern.id %}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i> Manage
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-chat-left-text text-muted" style="font-size: 4rem;"></i>
+                        <h5 class="mt-3">No concerns found</h5>
+                        <p class="text-muted">No customer concerns match your filter</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{% url 'orders:admin_dashboard' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

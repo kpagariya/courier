@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - Helpii{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-center">Contact Us</h1>
+        <p class="lead text-center">We'd love to hear from you</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h5>Our Office</h5>
+                    <p class="text-muted">123 Queen Street<br>Auckland, New Zealand<br>1010</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+                    <h5>Phone</h5>
+                    <p class="text-muted">+64 9 XXX XXXX<br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 2:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <h5>Email</h5>
+                    <p class="text-muted">info@courierpro.co.nz<br>support@courierpro.co.nz<br>Response within 24 hours</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Social Media Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card text-center p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h5 class="text-white mb-3">Connect With Us</h5>
+                    <div class="d-flex justify-content-center gap-4">
+                        <a href="https://facebook.com/courierpro" target="_blank" class="btn btn-light btn-lg rounded-circle" title="Facebook" style="width: 60px; height: 60px;">
+                            <i class="bi bi-facebook fs-3 text-primary"></i>
+                        </a>
+                        <a href="https://instagram.com/courierpro" target="_blank" class="btn btn-light btn-lg rounded-circle" title="Instagram" style="width: 60px; height: 60px;">
+                            <i class="bi bi-instagram fs-3" style="color: #E4405F;"></i>
+                        </a>
+                        <a href="https://twitter.com/courierpro" target="_blank" class="btn btn-light btn-lg rounded-circle" title="Twitter" style="width: 60px; height: 60px;">
+                            <i class="bi bi-twitter-x fs-3 text-dark"></i>
+                        </a>
+                    </div>
+                    <p class="text-white-50 mt-3 mb-0 small">Follow us for updates, promotions, and courier tips!</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="card p-4">
+                    <h3 class="mb-4">Send Us a Message</h3>
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" placeholder="Your Name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" placeholder="your.email@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" class="form-control" placeholder="Message Subject">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control" rows="5" placeholder="Your message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

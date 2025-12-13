@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Your Order - Helpii{% endblock %}
+
+{% block content %}
+<div class="bg-info text-white py-4">
+    <div class="container" style="max-width: 1200px;">
+        <h2 class="fw-bold"><i class="bi bi-search me-2"></i>Track Your Order</h2>
+        <p class="mb-0">Enter your Order ID to track your parcel's journey</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container" style="max-width: 900px;">
+        <!-- Search Box -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-4">
+                <form method="get">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-9">
+                            <label for="order-id-input" class="form-label fw-bold">Order ID</label>
+                            <input type="text" class="form-control form-control-lg" id="order-id-input" name="order_id" 
+                                   placeholder="Enter Order ID (e.g., ORD-20251201-1)" 
+                                   value="{{ search_query }}" required
+                                   pattern="ORD-\d{8}-\d+"
+                                   title="Format: ORD-YYYYMMDD-N (e.g., ORD-20251201-1)">
+                            <small class="text-muted">Format: ORD-YYYYMMDD-N (e.g., ORD-20251201-1)</small>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-info btn-lg w-100">
+                                <i class="bi bi-search me-2"></i>Track
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if error %}
+        <!-- Error Message -->
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 2rem;"></i>
+            <div>
+                <h5 class="alert-heading mb-1">Order Not Found</h5>
+                <p class="mb-0">{{ error }}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-box-seam text-muted" style="font-size: 4rem;"></i>
+                <h4 class="mt-3">Where to Find Your Order ID?</h4>
+                <p class="text-muted">Your Order ID was sent to your email when you placed the order.</p>
+                <ul class="list-unstyled text-start" style="max-width: 500px; margin: 0 auto;">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Check your email inbox</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Look for confirmation email from Helpii</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Order ID format: ORD-YYYYMMDD-N (e.g., ORD-20251201-1)</li>
+                </ul>
+                <a href="{% url 'accounts:login' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Login to View All Orders
+                </a>
+            </div>
+        </div>
+        {% elif order %}
+        <!-- Order Found -->
+        <div class="alert alert-success d-flex align-items-center mb-4">
+            <i class="bi bi-check-circle-fill me-3" style="font-size: 2rem;"></i>
+            <div>
+                <h5 class="alert-heading mb-1">Order Found!</h5>
+                <p class="mb-0">Tracking information for Order <strong>{{ order.order_id }}</strong></p>
+            </div>
+        </div>
+
+        <!-- Order Status Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0"><i class="bi bi-box-seam me-2"></i>Order {{ order.order_id }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted d-block mb-2">Current Status</small>
+                        <span class="badge bg-{{ order.get_status_display_class }} fs-6 px-3 py-2">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Order Placed</small>
+                        <p class="mb-0 fw-bold">{{ order.created_at|date:"M d, Y h:i A" }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">From</small>
+                        <p class="mb-0">{{ order.pickup_address|truncatewords:10 }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">To</small>
+                        <p class="mb-0">{{ order.delivery_address|truncatewords:10 }}</p>
+                    </div>
+                    {% if order.distance_km %}
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Distance</small>
+                        <p class="mb-0">{{ order.distance_km }} km</p>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Weight</small>
+                        <p class="mb-0">{{ order.parcel_weight }} kg</p>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <h5 class="mb-3"><i class="bi bi-clock-history me-2"></i>Tracking Timeline</h5>
+                <div class="tracking-timeline">
+                    {% for item in timeline %}
+                    <div class="timeline-item {% if item.completed %}completed{% endif %}">
+                        <div class="timeline-marker">
+                            <i class="bi {{ item.icon }}"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h6 class="mb-1 {% if item.completed %}text-success{% else %}text-muted{% endif %}">
+                                {{ item.label }}
+                            </h6>
+                            {% if item.date %}
+                            <small class="text-muted">{{ item.date|date:"M d, Y h:i A" }}</small>
+                            {% else %}
+                            <small class="text-muted">Pending</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if order.status == 'DELIVERED' and order.delivery_proof_image %}
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="mb-3"><i class="bi bi-camera me-2"></i>Delivery Proof</h6>
+                    <img src="{{ order.delivery_proof_image.url }}" alt="Delivery Proof" class="img-fluid rounded" style="max-height: 300px;">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="mb-3">Need Help?</h5>
+                <p class="text-muted mb-3">Contact our support team for assistance</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="mailto:support@courierpro.com" class="btn btn-outline-primary">
+                        <i class="bi bi-envelope me-2"></i>Email Support
+                    </a>
+                    {% if user.is_authenticated and order.customer == user %}
+                    <a href="{% url 'orders:raise_concern' order.order_id %}" class="btn btn-outline-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>Report Issue
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.tracking-timeline {
+    position: relative;
+    padding-left: 40px;
+}
+
+.tracking-timeline::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 30px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -40px;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+.timeline-item.completed .timeline-marker {
+    background: #d1fae5;
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.timeline-content h6 {
+    font-weight: 600;
+}
+
+.bg-purple {
+    background-color: #8b5cf6 !important;
+}
+</style>
+{% endblock %}
+

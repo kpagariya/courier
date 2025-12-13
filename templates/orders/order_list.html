@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block title %}My Orders - Helpii{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold">My Orders</h2>
+                <p class="text-muted mb-0">View and manage all your courier orders</p>
+            </div>
+            <a href="{% url 'orders:create_order' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>New Order
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <!-- Filter Buttons -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="btn-group flex-wrap" role="group">
+                    <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary {% if not status_filter %}active{% endif %}">
+                        All Orders
+                    </a>
+                    <a href="?status=UNDER_REVIEW" class="btn btn-outline-warning {% if status_filter == 'UNDER_REVIEW' %}active{% endif %}">
+                        Under Review
+                    </a>
+                    <a href="?status=ACCEPTED" class="btn btn-outline-info {% if status_filter == 'ACCEPTED' %}active{% endif %}">
+                        Accepted
+                    </a>
+                    <a href="?status=PICKED" class="btn btn-outline-primary {% if status_filter == 'PICKED' %}active{% endif %}">
+                        Picked
+                    </a>
+                    <a href="?status=ON_THE_WAY" class="btn btn-outline-primary {% if status_filter == 'ON_THE_WAY' %}active{% endif %}">
+                        On the Way
+                    </a>
+                    <a href="?status=DELIVERED" class="btn btn-outline-success {% if status_filter == 'DELIVERED' %}active{% endif %}">
+                        Delivered
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Orders Table -->
+        <div class="card">
+            <div class="card-body p-0">
+                {% if orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Pickup Address</th>
+                                    <th>Delivery Address</th>
+                                    <th>Weight</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td><strong>{{ order.order_id }}</strong></td>
+                                    <td>{{ order.pickup_address|truncatewords:4 }}</td>
+                                    <td>{{ order.delivery_address|truncatewords:4 }}</td>
+                                    <td>{{ order.parcel_weight }} kg</td>
+                                    <td>
+                                        <span class="status-badge bg-{{ order.get_status_display_class }}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if order.courier_amount %}
+                                            <strong>${{ order.courier_amount }}</strong>
+                                            {% if order.is_paid %}
+                                                <i class="bi bi-check-circle-fill text-success" title="Paid"></i>
+                                            {% endif %}
+                                        {% elif order.auto_calculated_amount %}
+                                            <span class="text-info" title="Estimated - awaiting confirmation">
+                                                ~${{ order.auto_calculated_amount }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'orders:order_detail' order.order_id %}" class="btn btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{% url 'orders:track_order_detail' order.order_id %}" class="btn btn-outline-info" title="Track">
+                                                <i class="bi bi-geo-alt"></i>
+                                            </a>
+                                            {% if order.can_be_paid %}
+                                                <a href="{% url 'payments:payment_method' order.order_id %}" class="btn btn-outline-success" title="Pay Now">
+                                                    <i class="bi bi-credit-card"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                        <h5 class="mt-3">No orders found</h5>
+                        <p class="text-muted">You haven't placed any orders yet</p>
+                        <a href="{% url 'orders:create_order' %}" class="btn btn-primary mt-2">
+                            <i class="bi bi-plus-circle me-2"></i>Create Your First Order
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.status-update-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    z-index: 10000;
+    display: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    min-width: 250px;
+}
+
+.status-update-indicator.show {
+    display: block;
+    animation: slideInUp 0.4s ease-out;
+}
+
+.status-update-indicator.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+@keyframes slideInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+
+.status-badge {
+    transition: all 0.3s ease;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkInterval = 45000; // Check every 45 seconds for list page
+    let hasUpdates = false;
+    
+    // Get all order IDs on the page
+    const orderRows = document.querySelectorAll('tbody tr');
+    const orderData = [];
+    
+    orderRows.forEach(row => {
+        const orderIdCell = row.querySelector('td:first-child strong');
+        const statusBadge = row.querySelector('.status-badge');
+        if (orderIdCell && statusBadge) {
+            orderData.push({
+                orderId: orderIdCell.textContent.trim(),
+                row: row,
+                statusBadge: statusBadge,
+                currentStatus: statusBadge.textContent.trim()
+            });
+        }
+    });
+    
+    if (orderData.length === 0) {
+        console.log('No orders to monitor');
+        return;
+    }
+    
+    // Create status update indicator
+    const indicator = document.createElement('div');
+    indicator.className = 'status-update-indicator';
+    document.body.appendChild(indicator);
+    
+    function showIndicator(message, duration = 2000) {
+        indicator.innerHTML = message;
+        indicator.classList.add('show');
+        setTimeout(() => {
+            indicator.classList.remove('show');
+        }, duration);
+    }
+    
+    function checkOrdersStatus() {
+        showIndicator('<i class="bi bi-arrow-clockwise me-2"></i>Checking for updates...', 1500);
+        hasUpdates = false;
+        
+        // Check each order
+        orderData.forEach(order => {
+            fetch(`/orders/api/order/${order.orderId}/status/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(`Error checking ${order.orderId}:`, data.error);
+                    return;
+                }
+                
+                // Check if status changed
+                if (data.status_display !== order.currentStatus) {
+                    hasUpdates = true;
+                    
+                    // Update the badge
+                    order.statusBadge.className = `status-badge bg-${data.status_class}`;
+                    order.statusBadge.textContent = data.status_display;
+                    order.currentStatus = data.status_display;
+                    
+                    // Highlight the row briefly
+                    order.row.style.backgroundColor = '#fff3cd';
+                    setTimeout(() => {
+                        order.row.style.backgroundColor = '';
+                    }, 5000);
+                    
+                    indicator.classList.add('success');
+                    showIndicator(
+                        `<i class="bi bi-bell-fill me-2"></i><strong>Order Updated!</strong><br>${order.orderId} → ${data.status_display}`,
+                        7000  // Show for 7 seconds
+                    );
+                    setTimeout(() => {
+                        indicator.classList.remove('success');
+                    }, 7000);
+                }
+            })
+            .catch(error => {
+                console.error(`Error checking order ${order.orderId}:`, error);
+            });
+        });
+        
+        // After checking all orders, show final message
+        setTimeout(() => {
+            if (!hasUpdates) {
+                showIndicator('<i class="bi bi-check2 me-2"></i>All orders up to date', 2000);
+            }
+        }, 2000);
+    }
+    
+    // Check status after 10 seconds on page load
+    setTimeout(checkOrdersStatus, 10000);
+    
+    // Then check every 45 seconds
+    setInterval(checkOrdersStatus, checkInterval);
+    
+    console.log(`Auto-refresh enabled for ${orderData.length} orders: Checking every 45 seconds`);
+});
+</script>
+{% endblock %}
+
