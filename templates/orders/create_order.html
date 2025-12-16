@@ -368,7 +368,7 @@
                                 <div class="step-icon">3</div>
                                 <div class="step-content">
                                     <strong style="font-size: 0.85rem;">Admin Review</strong>
-                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">Team reviews within 2-4 hours</p>
+                                    <p class="mb-0" style="font-size: 0.75rem; color: #666;">Team reviews ASAP (5-10 mins)</p>
                                 </div>
                             </div>
                             
@@ -731,30 +731,11 @@ function showEstimate(distance, price, deliverySpeed, apiData) {
         priceNote = 'Includes overnight delivery surcharge';
     }
     
-    // Build breakdown HTML if API data available
-    let breakdownHtml = '';
-    if (apiData && apiData.breakdown) {
-        const b = apiData.breakdown;
-        let formulaHtml = b.formula || '';
-        let oversizeNote = b.is_oversize ? '<span class="badge bg-warning text-dark ms-1">Oversize</span>' : '';
-        
-        breakdownHtml = `
-            <hr class="my-2">
-            <small class="text-muted">
-                <strong>Breakdown:</strong><br>
-                Type: ${b.delivery_type} ${oversizeNote}<br>
-                Rule: ${b.rule_name}<br>
-                Formula: ${formulaHtml}
-            </small>
-        `;
-    }
-    
     estimateDiv.className = 'alert ' + alertClass + ' mt-3';
     estimateDiv.innerHTML = `
         <h5 class="alert-heading"><i class="bi bi-calculator me-2"></i>Estimated Quote</h5>
         <p class="mb-1"><strong>Distance:</strong> ${distance.toFixed(2)} km</p>
         <p class="mb-0"><strong>Estimated Price:</strong> <span class="fs-4 text-success">NZD $${price.toFixed(2)}</span></p>
-        ${breakdownHtml}
         <small class="text-muted d-block mt-2">${priceNote}</small>
     `;
     
