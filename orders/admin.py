@@ -28,7 +28,7 @@ class OrderAdmin(admin.ModelAdmin):
                 'parcel_type', 'delivery_speed', 'is_oversize',
                 'pickup_address', 'delivery_address', 
                 'pickup_latitude', 'pickup_longitude', 'delivery_latitude', 'delivery_longitude',
-                'distance_km', 'parcel_weight', 'quantity', 'length', 'width', 'height', 
+                'distance_km', 'parcel_weight', 'quantity',
                 'description', 'parcel_image', 'delivery_proof_image'
             )
         }),
@@ -133,8 +133,8 @@ class UserDeliveryAdmin(admin.ModelAdmin):
 class PricingConfigurationAdmin(admin.ModelAdmin):
     """Admin interface for Pricing Configuration"""
     
-    list_display = ('base_price', 'price_per_km', 'price_per_kg', 'allow_customer_negotiation', 'updated_at')
-    list_editable = ('allow_customer_negotiation',)  # Quick edit from list view
+    list_display = ('base_price', 'price_per_km', 'price_per_kg', 'allow_customer_negotiation', 'show_distance_to_customer', 'updated_at')
+    list_editable = ('allow_customer_negotiation', 'show_distance_to_customer')  # Quick edit from list view
     readonly_fields = ('updated_at',)
     
     fieldsets = (
@@ -142,9 +142,9 @@ class PricingConfigurationAdmin(admin.ModelAdmin):
             'fields': ('base_price', 'price_per_km', 'price_per_kg'),
             'description': 'Set the base pricing rates for delivery calculations'
         }),
-        ('Customer Options', {
-            'fields': ('allow_customer_negotiation',),
-            'description': 'Enable/disable customer price negotiation feature. When enabled, customers can propose their own price during order creation.'
+        ('Customer Display Options', {
+            'fields': ('allow_customer_negotiation', 'show_distance_to_customer'),
+            'description': 'Control what customers can see and do during order creation.'
         }),
         ('System Information', {
             'fields': ('updated_at',),

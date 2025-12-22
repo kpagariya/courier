@@ -207,10 +207,18 @@
                                 <a href="{% url 'accounts:password_reset' %}" class="text-primary small">Forgot password?</a>
                             </div>
                             
-                            <button type="submit" class="btn btn-primary w-100 py-2">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Login & Book Courier
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Login
                             </button>
                         </form>
+                        
+                        <!-- New Customer Section -->
+                        <div class="text-center mt-4 pt-3 border-top">
+                            <span class="fw-bold text-dark fs-5">New Customer?</span>
+                            <a href="{% url 'accounts:register' %}" class="btn btn-success ms-2">
+                                <i class="bi bi-person-plus me-1"></i>Register Now
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -251,11 +259,25 @@
                             </button>
                         </form>
                         
-                        <div class="bg-light rounded-3 p-3 text-center">
-                            <p class="mb-2 small text-muted">New Customer?</p>
-                            <a href="{% url 'accounts:register' %}" class="btn btn-success px-4">
-                                <i class="bi bi-person-plus me-1"></i>Register Now
-                            </a>
+                        <!-- Why Track With Us -->
+                        <div class="rounded-3 p-3" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);">
+                            <div class="text-center mb-2">
+                                <span class="fw-bold text-success"><i class="bi bi-patch-check-fill me-1"></i>Order Status Tracking</span>
+                            </div>
+                            <div class="d-flex justify-content-around text-center">
+                                <div>
+                                    <i class="bi bi-truck text-success fs-5"></i>
+                                    <div class="small text-muted">Status Updates</div>
+                                </div>
+                                <div>
+                                    <i class="bi bi-envelope-check text-success fs-5"></i>
+                                    <div class="small text-muted">Email Alerts</div>
+                                </div>
+                                <div>
+                                    <i class="bi bi-shield-check text-success fs-5"></i>
+                                    <div class="small text-muted">Secure</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

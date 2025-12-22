@@ -253,9 +253,6 @@ def reorder_view(request, order_id):
             'delivery_address': original_order.delivery_address,
             'parcel_weight': original_order.parcel_weight,
             'quantity': original_order.quantity,
-            'length': original_order.length,
-            'width': original_order.width,
-            'height': original_order.height,
             'description': original_order.description,
         })
     

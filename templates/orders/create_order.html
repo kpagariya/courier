@@ -187,7 +187,7 @@
                                 {% if form.pickup_address.errors %}
                                     <div class="text-danger small mt-1">{{ form.pickup_address.errors.0 }}</div>
                                 {% endif %}
-                                <small class="text-muted">{% if google_maps_api_key %}Use autocomplete or type manually{% else %}Full address: street number, street, suburb, city, postal code{% endif %}</small>
+                                <small class="text-muted">{% if google_maps_api_key %}<i class="bi bi-info-circle me-1"></i>Start typing and select address from dropdown for accurate quote{% else %}Full address: street number, street, suburb, city, postal code{% endif %}</small>
                             </div>
                             
                             <div class="mb-3">
@@ -198,7 +198,7 @@
                                 {% if form.delivery_address.errors %}
                                     <div class="text-danger small mt-1">{{ form.delivery_address.errors.0 }}</div>
                                 {% endif %}
-                                <small class="text-muted">{% if google_maps_api_key %}Use autocomplete or type manually{% else %}Full address: street number, street, suburb, city, postal code{% endif %}</small>
+                                <small class="text-muted">{% if google_maps_api_key %}<i class="bi bi-info-circle me-1"></i>Start typing and select address from dropdown for accurate quote{% else %}Full address: street number, street, suburb, city, postal code{% endif %}</small>
                             </div>
                             
                             {% if google_maps_api_key %}
@@ -232,43 +232,6 @@
                                     {% render_field form.quantity class="form-control" %}
                                     {% if form.quantity.errors %}
                                         <div class="text-danger small mt-1">{{ form.quantity.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                            <!-- Dimensions Section -->
-                            <h6 class="mb-3 pb-2 border-bottom text-primary mt-3">
-                                <i class="bi bi-rulers me-2"></i>Dimensions (cm)
-                            </h6>
-                            
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="{{ form.length.id_for_label }}" class="form-label fw-bold">
-                                        Length *
-                                    </label>
-                                    {% render_field form.length class="form-control" %}
-                                    {% if form.length.errors %}
-                                        <div class="text-danger small mt-1">{{ form.length.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-md-4 mb-3">
-                                    <label for="{{ form.width.id_for_label }}" class="form-label fw-bold">
-                                        Width *
-                                    </label>
-                                    {% render_field form.width class="form-control" %}
-                                    {% if form.width.errors %}
-                                        <div class="text-danger small mt-1">{{ form.width.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-md-4 mb-3">
-                                    <label for="{{ form.height.id_for_label }}" class="form-label fw-bold">
-                                        Height *
-                                    </label>
-                                    {% render_field form.height class="form-control" %}
-                                    {% if form.height.errors %}
-                                        <div class="text-danger small mt-1">{{ form.height.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                             </div>
@@ -431,6 +394,9 @@
 <!-- Note: Requires Places API (New) to be enabled in Google Cloud Console -->
 <!-- Visit: https://console.cloud.google.com/apis/library/places-backend.googleapis.com -->
 <script>
+// Configuration from admin settings
+const SHOW_DISTANCE_TO_CUSTOMER = {{ pricing_config.show_distance_to_customer|yesno:"true,false,false" }};
+
 (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.googleapis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
     key: "{{ google_maps_api_key }}",
     v: "weekly",
@@ -722,19 +688,25 @@ function showEstimate(distance, price, deliverySpeed, apiData) {
     
     // Different styling for express delivery (admin approval)
     let alertClass = 'alert-success';
-    let priceNote = 'Final price may vary after admin review';
+    let priceNote = 'Final price may vary after admin review, estimated time 5 to 7 Mins';
     
     if (apiData && apiData.requires_admin_approval) {
         alertClass = 'alert-warning';
         priceNote = '<strong>Note:</strong> This delivery option requires admin approval. Price shown is estimate only.';
     } else if (deliverySpeed === 'OVERNIGHT') {
-        priceNote = 'Includes overnight delivery surcharge';
+        priceNote = 'Includes overnight delivery surcharge. Estimation time 5 to 7 Mins';
+    }
+    
+    // Build distance line conditionally based on admin config
+    let distanceLine = '';
+    if (SHOW_DISTANCE_TO_CUSTOMER) {
+        distanceLine = `<p class="mb-1"><strong>Distance:</strong> ${distance.toFixed(2)} km</p>`;
     }
     
     estimateDiv.className = 'alert ' + alertClass + ' mt-3';
     estimateDiv.innerHTML = `
         <h5 class="alert-heading"><i class="bi bi-calculator me-2"></i>Estimated Quote</h5>
-        <p class="mb-1"><strong>Distance:</strong> ${distance.toFixed(2)} km</p>
+        ${distanceLine}
         <p class="mb-0"><strong>Estimated Price:</strong> <span class="fs-4 text-success">NZD $${price.toFixed(2)}</span></p>
         <small class="text-muted d-block mt-2">${priceNote}</small>
     `;

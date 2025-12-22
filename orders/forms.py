@@ -39,8 +39,7 @@ class OrderForm(forms.ModelForm):
         model = Order
         fields = [
             'parcel_type', 'delivery_speed', 'is_oversize', 'pickup_address', 'delivery_address', 'parcel_weight',
-            'quantity', 'length', 'width', 'height',
-            'description', 'parcel_image', 'customer_proposed_price'
+            'quantity', 'description', 'parcel_image', 'customer_proposed_price'
         ]
         widgets = {
             'parcel_type': forms.Select(attrs={
@@ -67,24 +66,6 @@ class OrderForm(forms.ModelForm):
                 'placeholder': 'Number of parcels',
                 'min': '1'
             }),
-            'length': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Length in cm',
-                'step': '0.01',
-                'min': '0.01'
-            }),
-            'width': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Width in cm',
-                'step': '0.01',
-                'min': '0.01'
-            }),
-            'height': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Height in cm',
-                'step': '0.01',
-                'min': '0.01'
-            }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
@@ -109,9 +90,6 @@ class OrderForm(forms.ModelForm):
             'delivery_address': 'Delivery Address',
             'parcel_weight': 'Parcel Weight (kg)',
             'quantity': 'Number of Parcels',
-            'length': 'Length (cm)',
-            'width': 'Width (cm)',
-            'height': 'Height (cm)',
             'description': 'Additional Notes',
             'parcel_image': 'Parcel Image (Required)',
             'customer_proposed_price': 'Your Preferred Price (NZD)'

@@ -54,11 +54,6 @@ class Order(models.Model):
     parcel_image = models.ImageField(upload_to='parcels/%Y/%m/', help_text='Photo of the parcel (Required)')
     is_oversize = models.BooleanField(default=False, help_text='Item is too large for a standard car (e.g., >1m length, bulky)')
     
-    # Dimensions
-    length = models.DecimalField(max_digits=10, decimal_places=2, help_text='Length in cm')
-    width = models.DecimalField(max_digits=10, decimal_places=2, help_text='Width in cm')
-    height = models.DecimalField(max_digits=10, decimal_places=2, help_text='Height in cm')
-    
     # Additional information
     description = models.TextField(blank=True, help_text='Additional notes or description')
     
@@ -107,18 +102,27 @@ class Order(models.Model):
                 today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
                 today_end = today_start + timezone.timedelta(days=1)
                 
-                # Find the highest order number for today
+                # Find all orders for today with our prefix
                 today_orders = Order.objects.filter(
                     created_at__gte=today_start,
                     created_at__lt=today_end,
                     order_id__startswith=f"ORD-{date_str}-"
-                ).order_by('-order_id')
+                ).values_list('order_id', flat=True)
                 
-                if today_orders.exists():
-                    # Extract the number from the last order ID
-                    last_order_id = today_orders.first().order_id
-                    last_number = int(last_order_id.split('-')[-1])
-                    next_number = last_number + 1
+                if today_orders:
+                    # Extract all numbers and find the maximum
+                    order_numbers = []
+                    for oid in today_orders:
+                        try:
+                            num = int(oid.split('-')[-1])
+                            order_numbers.append(num)
+                        except (ValueError, IndexError):
+                            pass
+                    
+                    if order_numbers:
+                        next_number = max(order_numbers) + 1
+                    else:
+                        next_number = 1
                 else:
                     # First order of the day
                     next_number = 1
@@ -145,9 +149,6 @@ class Order(models.Model):
                 self.courier_amount and 
                 not self.is_paid)
     
-    def get_dimensions_display(self):
-        """Return formatted dimensions"""
-        return f"{self.length} x {self.width} x {self.height} cm"
     
     def calculate_auto_price(self):
         """
@@ -317,6 +318,7 @@ class PricingConfiguration(models.Model):
     """General pricing configuration"""
     
     allow_customer_negotiation = models.BooleanField(default=True, help_text='Allow customers to propose their own price')
+    show_distance_to_customer = models.BooleanField(default=False, help_text='Show calculated distance (KM) to customers on order form')
     
     # Legacy fields (kept for backward compatibility)
     base_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, help_text='LEGACY: Base price (use Pricing Tiers instead)')

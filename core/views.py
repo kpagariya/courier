@@ -53,28 +53,9 @@ def contact_view(request):
 
 
 def career_view(request):
-    """Career page view"""
-    job_openings = [
-        {
-            'title': 'Delivery Driver',
-            'location': 'Auckland',
-            'type': 'Full-time',
-            'description': 'We are looking for reliable delivery drivers to join our team.',
-        },
-        {
-            'title': 'Customer Service Representative',
-            'location': 'Wellington',
-            'type': 'Full-time',
-            'description': 'Join our customer service team to help our customers with their queries.',
-        },
-        {
-            'title': 'Warehouse Manager',
-            'location': 'Christchurch',
-            'type': 'Full-time',
-            'description': 'Manage warehouse operations and ensure efficient parcel processing.',
-        },
-    ]
-    
+    """Career page view - fetches active job openings from database"""
+    from .models import JobOpening
+    job_openings = JobOpening.objects.filter(is_active=True)
     return render(request, 'core/career.html', {'job_openings': job_openings})
 
 
