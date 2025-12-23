@@ -67,18 +67,29 @@
             min-height: 100vh;
         }
         
-        /* Modern Navbar */
+        /* Modern Navbar - Black Background with White Menu */
         .navbar {
-            background: linear-gradient(135deg, var(--dark-color) 0%, #1e293b 100%);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
             padding: 0.8rem 0;
-            backdrop-filter: blur(10px);
             position: relative;
             z-index: 1050;
         }
         
         .navbar .dropdown-menu {
             z-index: 1060;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .navbar .dropdown-menu .dropdown-item {
+            color: rgba(255,255,255,0.85);
+        }
+        
+        .navbar .dropdown-menu .dropdown-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
         }
         
         .navbar-brand {
@@ -240,8 +251,8 @@
         }
         
         .hero-section {
-            background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 30%, #cffafe 60%, #d1fae5 100%);
-            color: var(--dark-color);
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 40%, #0891b2 100%);
+            color: white;
             padding: 3rem 0;
             margin-bottom: 0;
             position: relative;
@@ -255,8 +266,20 @@
             right: -20%;
             width: 60%;
             height: 200%;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
             pointer-events: none;
+        }
+        
+        .hero-section h1,
+        .hero-section h2,
+        .hero-section .display-4,
+        .hero-section .display-5 {
+            color: white;
+        }
+        
+        .hero-section p,
+        .hero-section .lead {
+            color: rgba(255, 255, 255, 0.9);
         }
         
         /* Animated gradient border */
@@ -383,11 +406,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
-                <img src="{% static 'images/logo1.jpg' %}" alt="Helpii" height="55" style="max-width: 180px;" class="me-2">
-                <div class="brand-text">
+                <img src="{% static 'images/logo1.jpg' %}" alt="Helpii" height="65" style="max-width: 220px;" class="me-2">
+                <!--<div class="brand-text">
                     <span class="brand-name">Helpii</span>
                     <span class="brand-tagline">Because Time Matters Most</span>
-                </div>
+                </div> -->
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -464,11 +487,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
                         </li>
-                        <li class="nav-item">
+                       <!-- <li class="nav-item">
                             <a class="btn btn-light btn-sm ms-2 rounded-pill px-3" href="{% url 'accounts:register' %}">
                                 <i class="bi bi-person-plus me-1"></i>Register
                             </a>
-                        </li>
+                        </li>-->
                     {% endif %}
                 </ul>
                 
@@ -568,7 +591,7 @@
                         </li>
                         <li class="mb-3 d-flex align-items-center">
                             <i class="bi bi-clock-fill text-primary me-3"></i>
-                            <span class="text-white-50 small">Mon - Fri: 8AM - 6PM</span>
+                            <span class="text-white-50 small">Mon - Sunday : 8AM - 6PM</span>
                         </li>
                     </ul>
                 </div>
