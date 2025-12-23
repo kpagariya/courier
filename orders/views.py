@@ -88,10 +88,24 @@ def create_order_view(request):
                 order.delivery_latitude = delivery_lat
                 order.delivery_longitude = delivery_lng
                 
-                # Calculate distance using coordinates
-                from orders.utils import calculate_distance
-                distance = calculate_distance(pickup_lat, pickup_lng, delivery_lat, delivery_lng)
-                print(f"DEBUG: Calculated distance: {distance} km")
+                # Use frontend-calculated distance (Google Maps driving distance) if available
+                # This ensures consistency between frontend quote and backend calculation
+                frontend_distance = request.POST.get('calculated_distance')
+                
+                if frontend_distance:
+                    try:
+                        distance = float(frontend_distance)
+                        print(f"DEBUG: Using frontend-calculated distance: {distance} km")
+                    except (ValueError, TypeError):
+                        # Fallback to geodesic calculation
+                        from orders.utils import calculate_distance
+                        distance = calculate_distance(pickup_lat, pickup_lng, delivery_lat, delivery_lng)
+                        print(f"DEBUG: Fallback geodesic distance: {distance} km")
+                else:
+                    # No frontend distance, use geodesic calculation
+                    from orders.utils import calculate_distance
+                    distance = calculate_distance(pickup_lat, pickup_lng, delivery_lat, delivery_lng)
+                    print(f"DEBUG: Calculated geodesic distance: {distance} km")
                 
                 if distance:
                     order.distance_km = distance

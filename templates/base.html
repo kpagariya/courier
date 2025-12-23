@@ -4,7 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Courier System - Fast & Reliable Delivery{% endblock %}</title>
+    <title>{% block title %}Helpii - Fast & Reliable Courier Services Auckland{% endblock %}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block meta_description %}Helpii - Auckland's fastest courier service. Same day delivery, 2-hour express, and overnight options. Book online, track parcels in real-time. Reliable and affordable.{% endblock %}">
+    <meta name="keywords" content="courier Auckland, same day delivery Auckland, parcel delivery NZ, express courier Auckland, overnight delivery, Helpii courier, fast delivery Auckland, courier service New Zealand">
+    <meta name="author" content="Helpii">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}Helpii - Fast & Reliable Courier Services Auckland{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Auckland's fastest courier service. Same day, 2-hour express, and overnight delivery. Book now!{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% static 'images/logo1.jpg' %}{% endblock %}">
+    <meta property="og:locale" content="en_NZ">
+    <meta property="og:site_name" content="Helpii Courier">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Helpii - Fast Courier Services Auckland">
+    <meta name="twitter:description" content="Same day delivery across Auckland. Book now and track in real-time!">
+    <meta name="twitter:image" content="{% static 'images/logo1.jpg' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="{% static 'images/logo1.jpg' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo1.jpg' %}">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -644,6 +670,48 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     {% block extra_js %}{% endblock %}
+    
+    <!-- Structured Data (Schema.org) for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Helpii Courier Services",
+        "description": "Fast and reliable courier services in Auckland. Same day delivery, 2-hour express, and overnight options.",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "telephone": "+64 2102738469",
+        "email": "helpii24hrs@gmail.com",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Auckland",
+            "addressRegion": "Auckland",
+            "addressCountry": "NZ"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "-36.8485",
+            "longitude": "174.7633"
+        },
+        "areaServed": {
+            "@type": "City",
+            "name": "Auckland"
+        },
+        "priceRange": "$$",
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "08:00",
+            "closes": "18:00"
+        },
+        "sameAs": [
+            "https://www.facebook.com/share/1GRkQ14k32/",
+            "https://www.instagram.com/helpii24hrs",
+            "https://www.tiktok.com/@helpii24hrs"
+        ],
+        "image": "{% static 'images/logo1.jpg' %}",
+        "serviceType": ["Courier Service", "Parcel Delivery", "Same Day Delivery", "Express Delivery"]
+    }
+    </script>
 </body>
 </html>
 

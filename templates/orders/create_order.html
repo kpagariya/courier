@@ -125,11 +125,12 @@
                         <form method="post" enctype="multipart/form-data" id="orderForm">
                             {% csrf_token %}
                             
-                            <!-- Hidden fields for coordinates -->
+                            <!-- Hidden fields for coordinates and calculated distance -->
                             <input type="hidden" id="pickup_lat" name="pickup_lat">
                             <input type="hidden" id="pickup_lng" name="pickup_lng">
                             <input type="hidden" id="delivery_lat" name="delivery_lat">
                             <input type="hidden" id="delivery_lng" name="delivery_lng">
+                            <input type="hidden" id="calculated_distance" name="calculated_distance">
                             
                             <!-- Parcel Type Section -->
                             <h6 class="mb-3 pb-2 border-bottom text-primary">
@@ -614,6 +615,9 @@ function calculateEstimate() {
         }, function(response, status) {
             if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
                 const distanceKm = response.rows[0].elements[0].distance.value / 1000;
+                
+                // Save calculated distance to hidden field for form submission
+                document.getElementById('calculated_distance').value = distanceKm.toFixed(2);
                 
                 // Step 2: Call backend API for pricing calculation (Single Source of Truth)
                 const apiUrl = new URL('{% url "orders:calculate_quote_api" %}', window.location.origin);

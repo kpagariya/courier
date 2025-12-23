@@ -1,0 +1,25 @@
+# Robots.txt for Helpii Courier
+# https://www.robotstxt.org/
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /orders/admin/
+Disallow: /accounts/
+Disallow: /payments/
+
+# Allow important pages
+Allow: /
+Allow: /services/
+Allow: /about/
+Allow: /contact/
+Allow: /career/
+Allow: /terms/
+Allow: /privacy/
+Allow: /track/
+
+# Sitemap location
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
+
