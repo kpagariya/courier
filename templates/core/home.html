@@ -11,40 +11,40 @@
             <div class="col-lg-5 mb-4 mb-lg-0">
                 <!-- Badge -->
                 <div class="mb-3">
-                    <span class="badge px-4 py-2 rounded-pill" style="background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%); color: white; font-size: 0.95rem;">
+                    <span class="badge px-4 py-2 rounded-pill" style="background: rgba(255,255,255,0.2); color: white; font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.3);">
                         <i class="bi bi-lightning-charge-fill me-2"></i> Auckland's Fastest Courier
                     </span>
                 </div>
                 
                 <!-- Heading with gradient -->
-                <h1 class="display-5 fw-bold mb-4" style="line-height: 1.2;">
-                    <span class="gradient-text">Fast & Reliable</span><br>
+                <h1 class="display-5 fw-bold mb-4 text-white" style="line-height: 1.2;">
+                    <span style="color: #67e8f9;">Fast & Reliable</span><br>
                     Courier Services
                 </h1>
                 
-                <p class="lead text-muted mb-4" style="font-size: 1.1rem;">
+                <p class="lead mb-4" style="font-size: 1.1rem; color: rgba(255,255,255,0.9);">
                     Delivering your parcels safely across New Zealand. 
-                    <strong class="text-dark">Track in real-time</strong>, pay securely, and enjoy peace of mind.
+                    <strong style="color: #67e8f9;">Track in real-time</strong>, pay securely, and enjoy peace of mind.
                 </p>
                 
                 <!-- Stats Row -->
                 <div class="row g-3 mb-4">
                     <div class="col-4">
                         <div class="text-center">
-                            <h3 class="fw-bold text-primary mb-0">2HR</h3>
-                            <small class="text-muted">Express</small>
+                            <h3 class="fw-bold mb-0" style="color: #67e8f9;">2HR</h3>
+                            <small style="color: rgba(255,255,255,0.8);">Express</small>
                         </div>
                     </div>
                     <div class="col-4">
-                        <div class="text-center border-start border-end">
-                            <h3 class="fw-bold text-primary mb-0">1000+</h3>
-                            <small class="text-muted">Deliveries</small>
+                        <div class="text-center border-start border-end" style="border-color: rgba(255,255,255,0.3) !important;">
+                            <h3 class="fw-bold mb-0" style="color: #67e8f9;">1000+</h3>
+                            <small style="color: rgba(255,255,255,0.8);">Deliveries</small>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="text-center">
-                            <h3 class="fw-bold text-primary mb-0">24/7</h3>
-                            <small class="text-muted">Support</small>
+                            <h3 class="fw-bold mb-0" style="color: #67e8f9;">24/7</h3>
+                            <small style="color: rgba(255,255,255,0.8);">Support</small>
                         </div>
                     </div>
                 </div>
@@ -52,17 +52,17 @@
                 <!-- CTA Buttons -->
                 <div class="d-flex gap-3 flex-wrap">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'orders:create_order' %}" class="btn btn-primary btn-lg px-4">
+                        <a href="{% url 'orders:create_order' %}" class="btn btn-light btn-lg px-4 text-primary fw-bold">
                             <i class="bi bi-box-seam me-2"></i>Book a Courier
                         </a>
-                        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary btn-lg px-4">
+                        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-light btn-lg px-4">
                             <i class="bi bi-list-check me-2"></i>My Orders
                         </a>
                     {% else %}
-                        <a href="#login-section" class="btn btn-primary btn-lg px-4" onclick="document.getElementById('login-section').scrollIntoView({behavior: 'smooth'}); return false;">
+                        <a href="#login-section" class="btn btn-light btn-lg px-4 text-primary fw-bold" onclick="document.getElementById('login-section').scrollIntoView({behavior: 'smooth'}); return false;">
                             <i class="bi bi-box-arrow-in-right me-2"></i>Login to Book
                         </a>
-                        <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg px-4">
+                        <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg px-4">
                             <i class="bi bi-person-plus me-2"></i>Register Free
                         </a>
                     {% endif %}
